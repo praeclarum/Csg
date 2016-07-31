@@ -9,6 +9,8 @@ namespace Csg
 		PolygonTreeNode polygonTree;
 		Node rootnode;
 
+		public Node RootNode => rootnode;
+
 		public Tree(IEnumerable<Polygon> polygons)
 		{
 			polygonTree = new PolygonTreeNode();
@@ -70,9 +72,68 @@ namespace Csg
 			}
 		}
 
+		public void ClipPolygons(List<PolygonTreeNode> clippolygontreenodes, bool alsoRemoveCoplanarFront)
+		{
+			var args = new Args { Node = this, PolygonTreeNodes = clippolygontreenodes };
+			var stack = new Stack<Args>();
+
+			while (args != null)
+			{
+				var node = args.Node;
+				var polygontreenodes = args.PolygonTreeNodes;
+
+				if (node.Plane != null)
+				{
+					var backnodes = new List<PolygonTreeNode>();
+					var frontnodes = new List<PolygonTreeNode>();
+					var coplanarfrontnodes = alsoRemoveCoplanarFront ? backnodes : frontnodes;
+					var plane = node.Plane;
+					var numpolygontreenodes = polygontreenodes.Count;
+					for (var i = 0; i < numpolygontreenodes; i++)
+					{
+						var node1 = polygontreenodes[i];
+						if (!node1.IsRemoved)
+						{
+							node1.SplitByPlane(plane, coplanarfrontnodes, backnodes, frontnodes, backnodes);
+						}
+					}
+
+					if (node.Front != null && (frontnodes.Count > 0))
+					{
+						stack.Push(new Args { Node = node.Front, PolygonTreeNodes = frontnodes});
+					}
+					var numbacknodes = backnodes.Count;
+					if (node.Back != null && (numbacknodes > 0))
+					{
+						stack.Push(new Args { Node = node.Back, PolygonTreeNodes = backnodes});
+					}
+					else {
+						// there's nothing behind this plane. Delete the nodes behind this plane:
+						for (var i = 0; i < numbacknodes; i++)
+						{
+							backnodes[i].Remove();
+						}
+					}
+				}
+				
+				args = (stack.Count > 0) ? args = stack.Pop() : null;
+			}
+		}
+
 		public void ClipTo(Tree tree, bool alsoRemoveCoplanarFront)
 		{
-			throw new NotImplementedException();
+			var node = this;
+			var stack = new Stack<Node>();
+			while (node != null)
+			{
+				if (node.PolygonTreeNodes.Count > 0)
+				{
+					tree.RootNode.ClipPolygons(node.PolygonTreeNodes, alsoRemoveCoplanarFront);
+				}
+				if (node.Front != null) stack.Push(node.Front);
+				if (node.Back != null) stack.Push(node.Back);
+				node = (stack.Count > 0) ? stack.Pop() : null;
+			}
 		}
 
 		public void AddPolygonTreeNodes(List<PolygonTreeNode> addpolygontreenodes)
@@ -116,8 +177,7 @@ namespace Csg
 					}
 				}
 
-				if (stack.Count > 0) args = stack.Pop();
-				else args = null;
+				args = (stack.Count > 0) ? args = stack.Pop() : null;
 			}
 		}
 		class Args
@@ -132,14 +192,14 @@ namespace Csg
 		PolygonTreeNode parent;
 		List<PolygonTreeNode> children;
 		Polygon polygon;
-		//bool removed;
+		bool removed;
 
 		public PolygonTreeNode()
 		{
 			parent = null;
 			children = new List<PolygonTreeNode>();
 			polygon = null;
-			//removed = false;
+			removed = false;
 		}
 
 		public void AddPolygons(List<Polygon> polygons)
@@ -154,7 +214,31 @@ namespace Csg
 			}
 		}
 
-		bool IsRootNode => parent == null;
+		public void Remove()
+		{
+			if (!this.removed)
+			{
+				this.removed = true;
+
+#if DEBUG
+				if (this.IsRootNode) throw new InvalidOperationException("Can't remove root node");
+				if (this.children.Count > 0) throw new InvalidOperationException("Can't remove nodes with children");
+#endif
+
+				// remove ourselves from the parent's children list:
+				var parentschildren = this.parent.children;
+				var i = parentschildren.IndexOf(this);
+				if (i < 0) throw new InvalidOperationException("Child to be removed not found in parent");
+				parentschildren.RemoveAt(i);
+
+				// invalidate the parent's polygon, and of all parents above it:
+				this.parent.RecursivelyInvalidatePolygon();
+			}
+		}
+
+		public bool IsRemoved => removed;
+
+		public bool IsRootNode => parent == null;
 
 		public void Invert()
 		{
@@ -292,6 +376,19 @@ namespace Csg
 						node.polygon = node.polygon.Flipped();
 					}
 					queue.Add(node.children);
+				}
+			}
+		}
+
+		void RecursivelyInvalidatePolygon()
+		{
+			var node = this;
+			while (node.polygon != null)
+			{
+				node.polygon = null;
+				if (node.parent != null)
+				{
+					node = node.parent;
 				}
 			}
 		}
