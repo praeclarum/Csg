@@ -143,11 +143,6 @@ namespace Csg
 			return result;
 		}
 
-		bool MayOverlap(Csg other)
-		{
-			throw new NotImplementedException();
-		}
-
 		Csg Canonicalized()
 		{
 			if (IsCanonicalized)
@@ -217,6 +212,58 @@ namespace Csg
 			}
 		}
 
+		BoundingBox cachedBoundingBox;
+
+		BoundingBox Bounds
+		{
+			get
+			{
+				if (cachedBoundingBox == null)
+				{
+					var minpoint = new Vector3D(0, 0, 0);
+					var maxpoint = new Vector3D(0, 0, 0);
+					var polygons = this.Polygons;
+					var numpolygons = polygons.Count;
+					for (var i = 0; i < numpolygons; i++)
+					{
+						var polygon = polygons[i];
+						var bounds = polygon.BoundingBox;
+						if (i == 0)
+						{
+							minpoint = bounds.Min;
+							maxpoint = bounds.Max;
+						}
+						else {
+							minpoint = minpoint.Min(bounds.Min);
+							maxpoint = maxpoint.Max(bounds.Max);
+						}
+					}
+					cachedBoundingBox = new BoundingBox { Min = minpoint, Max = maxpoint };
+				}
+				return cachedBoundingBox;
+			}
+		}
+
+		bool MayOverlap(Csg csg)
+		{
+			if ((this.Polygons.Count == 0) || (csg.Polygons.Count == 0))
+			{
+				return false;
+			}
+			else
+			{
+				var mybounds = Bounds;
+				var otherbounds = csg.Bounds;
+				if (mybounds.Max.X < otherbounds.Min.X) return false;
+				if (mybounds.Min.X > otherbounds.Max.X) return false;
+				if (mybounds.Max.Y < otherbounds.Min.Y) return false;
+				if (mybounds.Min.Y > otherbounds.Max.Y) return false;
+				if (mybounds.Max.Z < otherbounds.Min.Z) return false;
+				if (mybounds.Min.Z > otherbounds.Max.Z) return false;
+				return true;
+			}
+		}
+
 		static void RetesselateCoplanarPolygons(List<Polygon> sourcepolygons, List<Polygon> destpolygons)
 		{
 			var EPS = 1e-5;
@@ -232,7 +279,7 @@ namespace Csg
 				var topy2polygonindexes = new Dictionary<double, List<int>>();
 				var ycoordinatetopolygonindexes = new Dictionary<double, HashSet<int>>();
 
-				var xcoordinatebins = new Dictionary<double, double>();
+				//var xcoordinatebins = new Dictionary<double, double>();
 				var ycoordinatebins = new Dictionary<double, double>();
 
 				// convert all polygon vertices to 2D
