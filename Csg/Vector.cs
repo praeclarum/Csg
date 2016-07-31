@@ -2,7 +2,7 @@
 
 namespace Csg
 {
-	public struct Vector3D
+	public struct Vector3D : IEquatable<Vector3D>
 	{
 		public double X, Y, Z;
 
@@ -13,9 +13,24 @@ namespace Csg
 			Z = z;
 		}
 
+		public bool Equals(Vector3D a)
+		{
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+			return X == a.X && Y == a.Y && Z == a.Z;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+		}
+
 		public double Length
 		{
 			get { return Math.Sqrt(X * X + Y * Y + Z * Z); }
+		}
+
+		public double DistanceToSquared(Vector3D a)
+		{
+			var dx = X - a.X;
+			var dy = Y - a.Y;
+			var dz = Z - a.Z;
+			return dx * dx + dy * dy + dz * dz;
 		}
 
 		public double Dot(Vector3D a)
@@ -63,6 +78,10 @@ namespace Csg
 			return new Vector3D(a.X * b, a.Y * b, a.Z*b);
 		}
 
-}
+		public override string ToString()
+		{
+			return $"[{X}, {Y}, {Z}]";
+		}
+	}
 }
 

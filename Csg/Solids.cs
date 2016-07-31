@@ -60,9 +60,13 @@ namespace Csg
 			var result = Csg.FromPolygons(polygons);
 			return result;
 		}
-		public static Csg Sphere(double radius)
+		public static Csg Sphere(double radius, int resolution = Csg.DefaultResolution3D)
 		{
-			return Sphere(new SphereOptions { Radius = radius });
+			return Sphere(new SphereOptions { Radius = radius, Resolution = resolution });
+		}
+		public static Csg Sphere(double radius, Vector3D center, int resolution = Csg.DefaultResolution3D)
+		{
+			return Sphere(new SphereOptions { Radius = radius, Center = center, Resolution = resolution });
 		}
 	}
 

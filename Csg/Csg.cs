@@ -77,7 +77,7 @@ namespace Csg
 
 		public Csg Substract(params Csg[] csgs)
 		{
-			Csg result = null;
+			Csg result = this;
 			for (var i = 0; i < csgs.Length; i++)
 			{
 				var islast = (i == (csgs.Length - 1));
