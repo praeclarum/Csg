@@ -227,11 +227,6 @@ namespace Csg
 		}
 	}
 
-	public class Shared
-	{
-		public int Tag;
-	}
-
 	class FuzzyCsgFactory
 	{
 		public Csg GetCsg(Csg start)
@@ -242,7 +237,7 @@ namespace Csg
 		{
 			throw new NotImplementedException();
 		}
-		public Shared GetPolygonShared(Shared shared)
+		public PolygonShared GetPolygonShared(PolygonShared shared)
 		{
 			throw new NotImplementedException();
 		}
