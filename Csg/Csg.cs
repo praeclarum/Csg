@@ -232,8 +232,8 @@ namespace Csg
 				var topy2polygonindexes = new Dictionary<double, List<int>>();
 				var ycoordinatetopolygonindexes = new Dictionary<double, HashSet<int>>();
 
-				var xcoordinatebins = new Dictionary<int, double>();
-				var ycoordinatebins = new Dictionary<int, double>();
+				var xcoordinatebins = new Dictionary<double, double>();
+				var ycoordinatebins = new Dictionary<double, double>();
 
 				// convert all polygon vertices to 2D
 				// Make a list of all encountered y coordinates
@@ -254,7 +254,7 @@ namespace Csg
 							var pos2d = orthobasis.To2D(poly3d.Vertices[i].Pos);
 							// perform binning of y coordinates: If we have multiple vertices very
 							// close to each other, give them the same y coordinate:
-							var ycoordinatebin = (int)Math.Floor(pos2d.Y * ycoordinateBinningFactor);
+							var ycoordinatebin = Math.Floor(pos2d.Y * ycoordinateBinningFactor);
 							double newy;
 							if (ycoordinatebins.ContainsKey(ycoordinatebin))
 							{
