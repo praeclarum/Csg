@@ -230,7 +230,7 @@ namespace Csg
 				var polygonvertices2d = new List<List<Vector2D>>(); // array of array of CSG.Vector2D
 				var polygontopvertexindexes = new List<int>(); // array of indexes of topmost vertex per polygon
 				var topy2polygonindexes = new Dictionary<double, List<int>>();
-				var ycoordinatetopolygonindexes = new Dictionary<double, Dictionary<int, bool>>();
+				var ycoordinatetopolygonindexes = new Dictionary<double, HashSet<int>>();
 
 				var xcoordinatebins = new Dictionary<int, double>();
 				var ycoordinatebins = new Dictionary<int, double>();
@@ -287,9 +287,9 @@ namespace Csg
 							}
 							if (!(ycoordinatetopolygonindexes.ContainsKey(y)))
 							{
-								ycoordinatetopolygonindexes[y] = new Dictionary<int, bool>();
+								ycoordinatetopolygonindexes[y] = new HashSet<int>();
 							}
-							ycoordinatetopolygonindexes[y][polygonindex] = true;
+							ycoordinatetopolygonindexes[y].Add(polygonindex);
 						}
 						if (miny >= maxy)
 						{
@@ -345,7 +345,7 @@ namespace Csg
 					{
 						var activepolygon = activepolygons[activepolygonindex];
 						var polygonindex = activepolygon.polygonindex;
-						if (polygonindexeswithcorner[polygonindex])
+						if (polygonindexeswithcorner.Contains(polygonindex))
 						{
 							// this active polygon has a corner at this y coordinate:
 							var vertices2d = polygonvertices2d[polygonindex];
@@ -400,9 +400,8 @@ namespace Csg
 						var middleycoordinate = 0.5 * (ycoordinate + nextycoordinate);
 						// update activepolygons by adding any polygons that start here:
 						var startingpolygonindexes = topy2polygonindexes[ycoordinate];
-						foreach (var polygonindex_key in startingpolygonindexes)
+						foreach (var polygonindex in startingpolygonindexes)
 						{
-							var polygonindex = startingpolygonindexes[polygonindex_key];
 							var vertices2d = polygonvertices2d[polygonindex];
 							var numvertices = vertices2d.Count;
 							var topvertexindex = polygontopvertexindexes[polygonindex];
@@ -520,8 +519,8 @@ namespace Csg
 												// Yes, the top of this polygon matches the bottom of the previous:
 												matchedindexes.Add(ii);
 												// Now check if the joined polygon would remain convex:
-												var d1 = thispolygon.leftline.Direction().X - prevpolygon.leftline.Direction().X;
-												var d2 = thispolygon.rightline.Direction().X - prevpolygon.rightline.Direction().X;
+												var d1 = thispolygon.leftline.Direction.X - prevpolygon.leftline.Direction.X;
+												var d2 = thispolygon.rightline.Direction.X - prevpolygon.rightline.Direction.X;
 												var leftlinecontinues = Math.Abs(d1) < EPS;
 												var rightlinecontinues = Math.Abs(d2) < EPS;
 												var leftlineisconvex = leftlinecontinues || (d1 >= 0);
@@ -608,12 +607,51 @@ namespace Csg
 
 		static void InsertSorted<T>(List<T> array, T element, Func<T, T, int> comparefunc)
 		{
-			throw new NotImplementedException();
+			var leftbound = 0;
+			var rightbound = array.Count;
+			while (rightbound > leftbound)
+			{
+				var testindex = (leftbound + rightbound) / 2;
+				var testelement = array[testindex];
+				var compareresult = comparefunc(element, testelement);
+				if (compareresult > 0) // element > testelement
+				{
+					leftbound = testindex + 1;
+				}
+				else {
+					rightbound = testindex;
+				}
+			}
+			array.Insert(leftbound, element);
 		}
 
 		static double InterpolateBetween2DPointsForY(Vector2D point1, Vector2D point2, double y)
 		{
-			throw new NotImplementedException();
+			var f1 = y - point1.Y;
+			var f2 = point2.Y - point1.Y;
+			if (f2 < 0)
+			{
+				f1 = -f1;
+				f2 = -f2;
+			}
+			double t;
+			if (f1 <= 0)
+			{
+				t = 0.0;
+			}
+			else if (f1 >= f2)
+			{
+				t = 1.0;
+			}
+			else if (f2 < 1e-10)
+			{
+				t = 0.5;
+			}
+			else {
+				t = f1 / f2;
+			}
+			var result = point1.X + t * (point2.X - point1.X);
+			return result;
 		}
 
 		class RetesselateActivePolygon
