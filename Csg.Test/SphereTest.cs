@@ -4,7 +4,7 @@ using System;
 namespace Csg.Test
 {
 	[TestFixture]
-	public class SphereTest
+	public class SphereTest : TestWithStlResult
 	{
 		[Test]
 		public void Unit()
@@ -14,6 +14,7 @@ namespace Csg.Test
 			var p0 = sphere.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.9);
 			Assert.LessOrEqual(p0.Plane.W, 1.1);
+			AssertAccepted(sphere, "SphereTest");
 		}
 
 		[Test]
@@ -23,6 +24,7 @@ namespace Csg.Test
 			var p0 = sphere.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.9e12);
 			Assert.LessOrEqual(p0.Plane.W, 1.1e12);
+			AssertAccepted(sphere, "SphereTest");
 		}
 	}
 }
