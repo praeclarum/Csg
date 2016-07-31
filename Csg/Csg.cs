@@ -250,18 +250,80 @@ namespace Csg
 
 	class FuzzyCsgFactory
 	{
+		readonly FuzzyFactory<Vertex> vertexfactory = new FuzzyFactory<Vertex>(3, 1.0e-5);
+		readonly FuzzyFactory<Plane> planefactory = new FuzzyFactory<Plane>(4, 1.0e-5);
+		readonly Dictionary<string, PolygonShared> polygonsharedfactory = new Dictionary<string, PolygonShared>();
+
 		public Csg GetCsg(Csg start)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Plane GetPlane(Plane plane)
+		public Plane GetPlane(Plane sourceplane)
 		{
-			throw new NotImplementedException();
+			var elements = new[] { sourceplane.Normal.X, sourceplane.Normal.Y, sourceplane.Normal.Z, sourceplane.W };
+			var result = planefactory.LookupOrCreate(elements, els => sourceplane);
+			return result;
 		}
-		public PolygonShared GetPolygonShared(PolygonShared shared)
+		
+		public PolygonShared GetPolygonShared(PolygonShared sourceshared)
 		{
-			throw new NotImplementedException();
+			var hash = sourceshared.Hash;
+			PolygonShared result;
+			if (polygonsharedfactory.TryGetValue(hash, out result))
+			{
+				return result;
+			}
+			else
+			{
+				polygonsharedfactory.Add(hash, sourceshared);
+				return sourceshared;
+			}
+		}
+	}
+
+	class FuzzyFactory<T>
+	{
+		readonly Dictionary<string, T> lookuptable = new Dictionary<string, T>();
+		readonly double multiplier;
+		public FuzzyFactory(int numdimensions, double tolerance)
+		{
+			multiplier = 1.0 / tolerance;
+		}
+		public T LookupOrCreate(double[] els, Func<double[], T> creatorCallback)
+		{
+			var hash = "";
+			foreach (var el in els)
+			{
+				var valueQuantized = (int)Math.Round(el * multiplier);
+				hash += valueQuantized + "/";
+			}
+			T result;
+			if (lookuptable.TryGetValue(hash, out result))
+			{
+				return result;
+			}
+			else {
+				result = creatorCallback(els);
+				var hashparts = els.Select(el => {
+					var q0 = Math.Floor(el * multiplier);
+					var q1 = q0 + 1;
+					return new[] { "" + q0 + "/", "" + q1 + "/" };
+				}).ToList();
+				var numelements = els.Length;
+				var numhashes = 1 << numelements;
+				for (var hashmask = 0; hashmask < numhashes; ++hashmask)
+				{
+					var hashmask_shifted = hashmask;
+					hash = "";
+					foreach (var hashpart in hashparts) {
+						hash += hashpart[hashmask_shifted & 1];
+						hashmask_shifted >>= 1;
+					}
+					lookuptable[hash] = result;
+				}
+				return result;
+			}
 		}
 	}
 }

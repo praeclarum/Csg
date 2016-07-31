@@ -91,6 +91,13 @@ namespace Csg
 		public PolygonShared(object color)
 		{			
 		}
+		public string Hash
+		{
+			get
+			{
+				return "null";
+			}
+		}
 	}
 
 	public class Vertex
