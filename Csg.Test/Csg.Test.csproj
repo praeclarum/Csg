@@ -36,6 +36,7 @@
     <Compile Include="SphereTest.cs" />
     <Compile Include="SubtractTest.cs" />
     <Compile Include="UnionTest.cs" />
+    <Compile Include="IntersectTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
