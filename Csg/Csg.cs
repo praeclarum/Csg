@@ -399,58 +399,61 @@ namespace Csg
 						nextycoordinate = ycoordinates[yindex + 1];
 						var middleycoordinate = 0.5 * (ycoordinate + nextycoordinate);
 						// update activepolygons by adding any polygons that start here:
-						var startingpolygonindexes = topy2polygonindexes[ycoordinate];
-						foreach (var polygonindex in startingpolygonindexes)
+						List<int> startingpolygonindexes;
+						if (topy2polygonindexes.TryGetValue(ycoordinate, out startingpolygonindexes))
 						{
-							var vertices2d = polygonvertices2d[polygonindex];
-							var numvertices = vertices2d.Count;
-							var topvertexindex = polygontopvertexindexes[polygonindex];
-							// the top of the polygon may be a horizontal line. In that case topvertexindex can point to any point on this line.
-							// Find the left and right topmost vertices which have the current y coordinate:
-							var topleftvertexindex = topvertexindex;
-							while (true)
+							foreach (var polygonindex in startingpolygonindexes)
 							{
-								var i = topleftvertexindex + 1;
-								if (i >= numvertices) i = 0;
-								if (vertices2d[i].Y != ycoordinate) break;
-								if (i == topvertexindex) break; // should not happen, but just to prevent endless loops
-								topleftvertexindex = i;
-							}
-							var toprightvertexindex = topvertexindex;
-							while (true)
-							{
-								var i = toprightvertexindex - 1;
-								if (i < 0) i = numvertices - 1;
-								if (vertices2d[i].Y != ycoordinate) break;
-								if (i == topleftvertexindex) break; // should not happen, but just to prevent endless loops
-								toprightvertexindex = i;
-							}
-							var nextleftvertexindex = topleftvertexindex + 1;
-							if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
-							var nextrightvertexindex = toprightvertexindex - 1;
-							if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
-							var newactivepolygon = new RetesselateActivePolygon
-							{
-								polygonindex = polygonindex,
-								leftvertexindex = topleftvertexindex,
-								rightvertexindex = toprightvertexindex,
-								topleft = vertices2d[topleftvertexindex],
-								topright = vertices2d[toprightvertexindex],
-								bottomleft = vertices2d[nextleftvertexindex],
-								bottomright = vertices2d[nextrightvertexindex],
-							};
+								var vertices2d = polygonvertices2d[polygonindex];
+								var numvertices = vertices2d.Count;
+								var topvertexindex = polygontopvertexindexes[polygonindex];
+								// the top of the polygon may be a horizontal line. In that case topvertexindex can point to any point on this line.
+								// Find the left and right topmost vertices which have the current y coordinate:
+								var topleftvertexindex = topvertexindex;
+								while (true)
+								{
+									var i = topleftvertexindex + 1;
+									if (i >= numvertices) i = 0;
+									if (vertices2d[i].Y != ycoordinate) break;
+									if (i == topvertexindex) break; // should not happen, but just to prevent endless loops
+									topleftvertexindex = i;
+								}
+								var toprightvertexindex = topvertexindex;
+								while (true)
+								{
+									var i = toprightvertexindex - 1;
+									if (i < 0) i = numvertices - 1;
+									if (vertices2d[i].Y != ycoordinate) break;
+									if (i == topleftvertexindex) break; // should not happen, but just to prevent endless loops
+									toprightvertexindex = i;
+								}
+								var nextleftvertexindex = topleftvertexindex + 1;
+								if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
+								var nextrightvertexindex = toprightvertexindex - 1;
+								if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
+								var newactivepolygon = new RetesselateActivePolygon
+								{
+									polygonindex = polygonindex,
+									leftvertexindex = topleftvertexindex,
+									rightvertexindex = toprightvertexindex,
+									topleft = vertices2d[topleftvertexindex],
+									topright = vertices2d[toprightvertexindex],
+									bottomleft = vertices2d[nextleftvertexindex],
+									bottomright = vertices2d[nextrightvertexindex],
+								};
 
-							InsertSorted(activepolygons, newactivepolygon, (el1, el2) =>
-							{
-								var x1 = InterpolateBetween2DPointsForY(
-									el1.topleft, el1.bottomleft, middleycoordinate);
-								var x2 = InterpolateBetween2DPointsForY(
-									el2.topleft, el2.bottomleft, middleycoordinate);
-								if (x1 > x2) return 1;
-								if (x1 < x2) return -1;
-								return 0;
-							});
-						} // for(var polygonindex in startingpolygonindexes)
+								InsertSorted(activepolygons, newactivepolygon, (el1, el2) =>
+								{
+									var x1 = InterpolateBetween2DPointsForY(
+										el1.topleft, el1.bottomleft, middleycoordinate);
+									var x2 = InterpolateBetween2DPointsForY(
+										el2.topleft, el2.bottomleft, middleycoordinate);
+									if (x1 > x2) return 1;
+									if (x1 < x2) return -1;
+									return 0;
+								});
+							} // for(var polygonindex in startingpolygonindexes)
+						}
 					} //  yindex < ycoordinates.length-1
 					  //if( (yindex == ycoordinates.length-1) || (nextycoordinate - ycoordinate > EPS) )
 					if (true)
