@@ -15,6 +15,14 @@ namespace Csg
 		public const int DefaultResolution2D = 32;
 		public const int DefaultResolution3D = 12;
 
+		public Csg()
+		{
+			Polygons = new List<Polygon>();
+			Properties = new Properties();
+			IsCanonicalized = true;
+			IsRetesselated = true;
+		}
+
 		public static Csg FromPolygons(List<Polygon> polygons)
 		{
 			var csg = new Csg();
@@ -224,9 +232,19 @@ namespace Csg
 
 	public class Properties
 	{
-		public Properties Merge(Properties others)
+		public readonly Dictionary<string, object> All = new Dictionary<string, object>();
+		public Properties Merge(Properties otherproperties)
 		{
-			throw new NotImplementedException();
+			var result = new Properties();
+			foreach (var x in All)
+			{
+				result.All.Add(x.Key, x.Value);
+			}
+			foreach (var x in otherproperties.All)
+			{
+				result.All[x.Key] = x.Value;
+			}
+			return result;
 		}
 	}
 
