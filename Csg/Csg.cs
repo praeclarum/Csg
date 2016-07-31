@@ -215,12 +215,427 @@ namespace Csg
 				result.Properties = Properties;
 				return result;
 			}
-
 		}
 
-		static void RetesselateCoplanarPolygons(List<Polygon> s, List<Polygon> r)
+		static void RetesselateCoplanarPolygons(List<Polygon> sourcepolygons, List<Polygon> destpolygons)
+		{
+			var EPS = 1e-5;
+
+			var numpolygons = sourcepolygons.Count;
+			if (numpolygons > 0)
+			{
+				var plane = sourcepolygons[0].Plane;
+				var shared = sourcepolygons[0].Shared;
+				var orthobasis = new OrthoNormalBasis(plane);
+				var polygonvertices2d = new List<List<Vector2D>>(); // array of array of CSG.Vector2D
+				var polygontopvertexindexes = new List<int>(); // array of indexes of topmost vertex per polygon
+				var topy2polygonindexes = new Dictionary<double, List<int>>();
+				var ycoordinatetopolygonindexes = new Dictionary<double, Dictionary<int, bool>>();
+
+				var xcoordinatebins = new Dictionary<int, double>();
+				var ycoordinatebins = new Dictionary<int, double>();
+
+				// convert all polygon vertices to 2D
+				// Make a list of all encountered y coordinates
+				// And build a map of all polygons that have a vertex at a certain y coordinate:
+				var ycoordinateBinningFactor = 1.0 / EPS * 10;
+				for (var polygonindex = 0; polygonindex < numpolygons; polygonindex++)
+				{
+					var poly3d = sourcepolygons[polygonindex];
+					var vertices2d = new List<Vector2D>();
+					var numvertices = poly3d.Vertices.Count;
+					var minindex = -1;
+					if (numvertices > 0)
+					{
+						double miny = 0, maxy = 0;
+						int maxindex;
+						for (var i = 0; i < numvertices; i++)
+						{
+							var pos2d = orthobasis.To2D(poly3d.Vertices[i].Pos);
+							// perform binning of y coordinates: If we have multiple vertices very
+							// close to each other, give them the same y coordinate:
+							var ycoordinatebin = (int)Math.Floor(pos2d.Y * ycoordinateBinningFactor);
+							double newy;
+							if (ycoordinatebins.ContainsKey(ycoordinatebin))
+							{
+								newy = ycoordinatebins[ycoordinatebin];
+							}
+							else if (ycoordinatebins.ContainsKey(ycoordinatebin + 1))
+							{
+								newy = ycoordinatebins[ycoordinatebin + 1];
+							}
+							else if (ycoordinatebins.ContainsKey(ycoordinatebin - 1))
+							{
+								newy = ycoordinatebins[ycoordinatebin - 1];
+							}
+							else {
+								newy = pos2d.Y;
+								ycoordinatebins[ycoordinatebin] = pos2d.Y;
+							}
+							pos2d = new Vector2D(pos2d.X, newy);
+							vertices2d.Add(pos2d);
+							var y = pos2d.Y;
+							if ((i == 0) || (y < miny))
+							{
+								miny = y;
+								minindex = i;
+							}
+							if ((i == 0) || (y > maxy))
+							{
+								maxy = y;
+								maxindex = i;
+							}
+							if (!(ycoordinatetopolygonindexes.ContainsKey(y)))
+							{
+								ycoordinatetopolygonindexes[y] = new Dictionary<int, bool>();
+							}
+							ycoordinatetopolygonindexes[y][polygonindex] = true;
+						}
+						if (miny >= maxy)
+						{
+							// degenerate polygon, all vertices have same y coordinate. Just ignore it from now:
+							vertices2d = new List<Vector2D>();
+							numvertices = 0;
+							minindex = -1;
+						}
+						else {
+							if (!(topy2polygonindexes.ContainsKey(miny)))
+							{
+								topy2polygonindexes[miny] = new List<int>();
+							}
+							topy2polygonindexes[miny].Add(polygonindex);
+						}
+					} // if(numvertices > 0)
+					  // reverse the vertex order:
+					vertices2d.Reverse();
+					minindex = numvertices - minindex - 1;
+					polygonvertices2d.Add(vertices2d);
+					polygontopvertexindexes.Add(minindex);
+				}
+				var ycoordinates = new List<double>();
+				foreach (var ycoordinate in ycoordinatetopolygonindexes) ycoordinates.Add(ycoordinate.Key);
+				ycoordinates.Sort();
+
+				// Now we will iterate over all y coordinates, from lowest to highest y coordinate
+				// activepolygons: source polygons that are 'active', i.e. intersect with our y coordinate
+				//   Is sorted so the polygons are in left to right order
+				// Each element in activepolygons has these properties:
+				//        polygonindex: the index of the source polygon (i.e. an index into the sourcepolygons
+				//                      and polygonvertices2d arrays)
+				//        leftvertexindex: the index of the vertex at the left side of the polygon (lowest x)
+				//                         that is at or just above the current y coordinate
+				//        rightvertexindex: dito at right hand side of polygon
+				//        topleft, bottomleft: coordinates of the left side of the polygon crossing the current y coordinate
+				//        topright, bottomright: coordinates of the right hand side of the polygon crossing the current y coordinate
+				var activepolygons = new List<RetesselateActivePolygon>();
+				var prevoutpolygonrow = new List<RetesselateActivePolygon>();
+				for (var yindex = 0; yindex < ycoordinates.Count; yindex++)
+				{
+					var newoutpolygonrow = new List<RetesselateActivePolygon>();
+					var ycoordinate = ycoordinates[yindex];
+					//var ycoordinate_as_string = ycoordinates + "";
+
+					// update activepolygons for this y coordinate:
+					// - Remove any polygons that end at this y coordinate
+					// - update leftvertexindex and rightvertexindex (which point to the current vertex index
+					//   at the the left and right side of the polygon
+					// Iterate over all polygons that have a corner at this y coordinate:
+					var polygonindexeswithcorner = ycoordinatetopolygonindexes[ycoordinate];
+					for (var activepolygonindex = 0; activepolygonindex < activepolygons.Count; ++activepolygonindex)
+					{
+						var activepolygon = activepolygons[activepolygonindex];
+						var polygonindex = activepolygon.polygonindex;
+						if (polygonindexeswithcorner[polygonindex])
+						{
+							// this active polygon has a corner at this y coordinate:
+							var vertices2d = polygonvertices2d[polygonindex];
+							var numvertices = vertices2d.Count;
+							var newleftvertexindex = activepolygon.leftvertexindex;
+							var newrightvertexindex = activepolygon.rightvertexindex;
+							// See if we need to increase leftvertexindex or decrease rightvertexindex:
+							while (true)
+							{
+								var nextleftvertexindex = newleftvertexindex + 1;
+								if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
+								if (vertices2d[nextleftvertexindex].Y != ycoordinate) break;
+								newleftvertexindex = nextleftvertexindex;
+							}
+							var nextrightvertexindex = newrightvertexindex - 1;
+							if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
+							if (vertices2d[nextrightvertexindex].Y == ycoordinate)
+							{
+								newrightvertexindex = nextrightvertexindex;
+							}
+							if ((newleftvertexindex != activepolygon.leftvertexindex) && (newleftvertexindex == newrightvertexindex))
+							{
+								// We have increased leftvertexindex or decreased rightvertexindex, and now they point to the same vertex
+								// This means that this is the bottom point of the polygon. We'll remove it:
+								activepolygons.RemoveAt(activepolygonindex);
+								--activepolygonindex;
+							}
+							else {
+								activepolygon.leftvertexindex = newleftvertexindex;
+								activepolygon.rightvertexindex = newrightvertexindex;
+								activepolygon.topleft = vertices2d[newleftvertexindex];
+								activepolygon.topright = vertices2d[newrightvertexindex];
+								var nextleftvertexindex = newleftvertexindex + 1;
+								if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
+								activepolygon.bottomleft = vertices2d[nextleftvertexindex];
+								nextrightvertexindex = newrightvertexindex - 1;
+								if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
+								activepolygon.bottomright = vertices2d[nextrightvertexindex];
+							}
+						} // if polygon has corner here
+					} // for activepolygonindex
+					double nextycoordinate;
+					if (yindex >= ycoordinates.Count - 1)
+					{
+						// last row, all polygons must be finished here:
+						activepolygons = new List<RetesselateActivePolygon>();
+						nextycoordinate = 0.0;
+					}
+					else // yindex < ycoordinates.length-1
+					{
+						nextycoordinate = ycoordinates[yindex + 1];
+						var middleycoordinate = 0.5 * (ycoordinate + nextycoordinate);
+						// update activepolygons by adding any polygons that start here:
+						var startingpolygonindexes = topy2polygonindexes[ycoordinate];
+						foreach (var polygonindex_key in startingpolygonindexes)
+						{
+							var polygonindex = startingpolygonindexes[polygonindex_key];
+							var vertices2d = polygonvertices2d[polygonindex];
+							var numvertices = vertices2d.Count;
+							var topvertexindex = polygontopvertexindexes[polygonindex];
+							// the top of the polygon may be a horizontal line. In that case topvertexindex can point to any point on this line.
+							// Find the left and right topmost vertices which have the current y coordinate:
+							var topleftvertexindex = topvertexindex;
+							while (true)
+							{
+								var i = topleftvertexindex + 1;
+								if (i >= numvertices) i = 0;
+								if (vertices2d[i].Y != ycoordinate) break;
+								if (i == topvertexindex) break; // should not happen, but just to prevent endless loops
+								topleftvertexindex = i;
+							}
+							var toprightvertexindex = topvertexindex;
+							while (true)
+							{
+								var i = toprightvertexindex - 1;
+								if (i < 0) i = numvertices - 1;
+								if (vertices2d[i].Y != ycoordinate) break;
+								if (i == topleftvertexindex) break; // should not happen, but just to prevent endless loops
+								toprightvertexindex = i;
+							}
+							var nextleftvertexindex = topleftvertexindex + 1;
+							if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
+							var nextrightvertexindex = toprightvertexindex - 1;
+							if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
+							var newactivepolygon = new RetesselateActivePolygon
+							{
+								polygonindex = polygonindex,
+								leftvertexindex = topleftvertexindex,
+								rightvertexindex = toprightvertexindex,
+								topleft = vertices2d[topleftvertexindex],
+								topright = vertices2d[toprightvertexindex],
+								bottomleft = vertices2d[nextleftvertexindex],
+								bottomright = vertices2d[nextrightvertexindex],
+							};
+
+							InsertSorted(activepolygons, newactivepolygon, (el1, el2) =>
+							{
+								var x1 = InterpolateBetween2DPointsForY(
+									el1.topleft, el1.bottomleft, middleycoordinate);
+								var x2 = InterpolateBetween2DPointsForY(
+									el2.topleft, el2.bottomleft, middleycoordinate);
+								if (x1 > x2) return 1;
+								if (x1 < x2) return -1;
+								return 0;
+							});
+						} // for(var polygonindex in startingpolygonindexes)
+					} //  yindex < ycoordinates.length-1
+					  //if( (yindex == ycoordinates.length-1) || (nextycoordinate - ycoordinate > EPS) )
+					if (true)
+					{
+						// Now activepolygons is up to date
+						// Build the output polygons for the next row in newoutpolygonrow:
+						for (var activepolygon_key = 0; activepolygon_key < activepolygons.Count; activepolygon_key++)
+						{
+							var activepolygon = activepolygons[activepolygon_key];
+							var polygonindex = activepolygon.polygonindex;
+							var vertices2d = polygonvertices2d[polygonindex];
+							var numvertices = vertices2d.Count;
+
+							var x = InterpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, ycoordinate);
+							var topleft = new Vector2D(x, ycoordinate);
+							x = InterpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, ycoordinate);
+							var topright = new Vector2D(x, ycoordinate);
+							x = InterpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, nextycoordinate);
+							var bottomleft = new Vector2D(x, nextycoordinate);
+							x = InterpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, nextycoordinate);
+							var bottomright = new Vector2D(x, nextycoordinate);
+							var outpolygon = new RetesselateActivePolygon
+							{
+								topleft = topleft,
+								topright = topright,
+								bottomleft = bottomleft,
+								bottomright = bottomright,
+								leftline = Line2D.FromPoints(topleft, bottomleft),
+								rightline = Line2D.FromPoints(bottomright, topright)
+							};
+							if (newoutpolygonrow.Count > 0)
+							{
+								var prevoutpolygon = newoutpolygonrow[newoutpolygonrow.Count - 1];
+								var d1 = outpolygon.topleft.DistanceTo(prevoutpolygon.topright);
+								var d2 = outpolygon.bottomleft.DistanceTo(prevoutpolygon.bottomright);
+								if ((d1 < EPS) && (d2 < EPS))
+								{
+									// we can join this polygon with the one to the left:
+									outpolygon.topleft = prevoutpolygon.topleft;
+									outpolygon.leftline = prevoutpolygon.leftline;
+									outpolygon.bottomleft = prevoutpolygon.bottomleft;
+									newoutpolygonrow.RemoveAt(newoutpolygonrow.Count - 1);
+								}
+							}
+							newoutpolygonrow.Add(outpolygon);
+						} // for(activepolygon in activepolygons)
+						if (yindex > 0)
+						{
+							// try to match the new polygons against the previous row:
+							var prevcontinuedindexes = new HashSet<int>();
+							var matchedindexes = new HashSet<int>();
+							for (var i = 0; i < newoutpolygonrow.Count; i++)
+							{
+								var thispolygon = newoutpolygonrow[i];
+								for (var ii = 0; ii < prevoutpolygonrow.Count; ii++)
+								{
+									if (!matchedindexes.Contains(ii)) // not already processed?
+									{
+										// We have a match if the sidelines are equal or if the top coordinates
+										// are on the sidelines of the previous polygon
+										var prevpolygon = prevoutpolygonrow[ii];
+										if (prevpolygon.bottomleft.DistanceTo(thispolygon.topleft) < EPS)
+										{
+											if (prevpolygon.bottomright.DistanceTo(thispolygon.topright) < EPS)
+											{
+												// Yes, the top of this polygon matches the bottom of the previous:
+												matchedindexes.Add(ii);
+												// Now check if the joined polygon would remain convex:
+												var d1 = thispolygon.leftline.Direction().X - prevpolygon.leftline.Direction().X;
+												var d2 = thispolygon.rightline.Direction().X - prevpolygon.rightline.Direction().X;
+												var leftlinecontinues = Math.Abs(d1) < EPS;
+												var rightlinecontinues = Math.Abs(d2) < EPS;
+												var leftlineisconvex = leftlinecontinues || (d1 >= 0);
+												var rightlineisconvex = rightlinecontinues || (d2 >= 0);
+												if (leftlineisconvex && rightlineisconvex)
+												{
+													// yes, both sides have convex corners:
+													// This polygon will continue the previous polygon
+													thispolygon.outpolygon = prevpolygon.outpolygon;
+													thispolygon.leftlinecontinues = leftlinecontinues;
+													thispolygon.rightlinecontinues = rightlinecontinues;
+													prevcontinuedindexes.Add(ii);
+												}
+												break;
+											}
+										}
+									} // if(!prevcontinuedindexes[ii])
+								} // for ii
+							} // for i
+							for (var ii = 0; ii < prevoutpolygonrow.Count; ii++)
+							{
+								if (!prevcontinuedindexes.Contains(ii))
+								{
+									// polygon ends here
+									// Finish the polygon with the last point(s):
+									var prevpolygon = prevoutpolygonrow[ii];
+									prevpolygon.outpolygon.rightpoints.Add(prevpolygon.bottomright);
+									if (prevpolygon.bottomright.DistanceTo(prevpolygon.bottomleft) > EPS)
+									{
+										// polygon ends with a horizontal line:
+										prevpolygon.outpolygon.leftpoints.Add(prevpolygon.bottomleft);
+									}
+									// reverse the left half so we get a counterclockwise circle:
+									prevpolygon.outpolygon.leftpoints.Reverse();
+									var points2d = new List<Vector2D>(prevpolygon.outpolygon.rightpoints);
+									points2d.AddRange(prevpolygon.outpolygon.leftpoints);
+									var vertices3d = new List<Vertex>();
+									foreach (var point2d in points2d)
+									{
+										var point3d = orthobasis.To3D(point2d);
+										var vertex3d = new Vertex(point3d);
+										vertices3d.Add(vertex3d);
+									}
+									var polygon = new Polygon(vertices3d, shared, plane);
+									destpolygons.Add(polygon);
+								}
+							}
+						} // if(yindex > 0)
+						for (var i = 0; i < newoutpolygonrow.Count; i++)
+						{
+							var thispolygon = newoutpolygonrow[i];
+							if (thispolygon.outpolygon == null)
+							{
+								// polygon starts here:
+								thispolygon.outpolygon = new RetesselateOutPolygon
+								{
+									leftpoints = new List<Vector2D>(),
+									rightpoints = new List<Vector2D>()
+								};
+								thispolygon.outpolygon.leftpoints.Add(thispolygon.topleft);
+								if (thispolygon.topleft.DistanceTo(thispolygon.topright) > EPS)
+								{
+									// we have a horizontal line at the top:
+									thispolygon.outpolygon.rightpoints.Add(thispolygon.topright);
+								}
+							}
+							else {
+								// continuation of a previous row
+								if (!thispolygon.leftlinecontinues)
+								{
+									thispolygon.outpolygon.leftpoints.Add(thispolygon.topleft);
+								}
+								if (!thispolygon.rightlinecontinues)
+								{
+									thispolygon.outpolygon.rightpoints.Add(thispolygon.topright);
+								}
+							}
+						}
+						prevoutpolygonrow = newoutpolygonrow;
+					}
+				} // for yindex
+			} // if(numpolygons > 0)
+		}
+
+		static void InsertSorted<T>(List<T> array, T element, Func<T, T, int> comparefunc)
 		{
 			throw new NotImplementedException();
+		}
+
+		static double InterpolateBetween2DPointsForY(Vector2D point1, Vector2D point2, double y)
+		{
+			throw new NotImplementedException();
+		}
+
+		class RetesselateActivePolygon
+		{
+			public int polygonindex;
+			public int leftvertexindex;
+			public int rightvertexindex;
+			public Vector2D topleft;
+			public Vector2D topright;
+			public Vector2D bottomleft;
+			public Vector2D bottomright;
+			public Line2D leftline;
+			public bool leftlinecontinues;
+			public Line2D rightline;
+			public bool rightlinecontinues;
+			public RetesselateOutPolygon outpolygon;
+		}
+
+		class RetesselateOutPolygon
+		{
+			public List<Vector2D> leftpoints;
+			public List<Vector2D> rightpoints;
 		}
 
 		static int staticTag = 1;

@@ -43,7 +43,7 @@ namespace Csg
 			return new Vector3D(
 				Y * a.Z - Z * a.Y,
 				Z * a.X - X * a.Z,
-				X * a.Y - Y*a.X);
+				X * a.Y - Y * a.X);
 		}
 
 		public Vector3D Unit
@@ -83,12 +83,69 @@ namespace Csg
 		}
 		public static Vector3D operator *(Vector3D a, double b)
 		{
-			return new Vector3D(a.X * b, a.Y * b, a.Z*b);
+			return new Vector3D(a.X * b, a.Y * b, a.Z * b);
 		}
 
 		public override string ToString()
 		{
 			return $"[{X}, {Y}, {Z}]";
+		}
+	}
+
+	public struct Vector2D : IEquatable<Vector2D>
+	{
+		public double X, Y;
+
+		public Vector2D(double x, double y)
+		{
+			X = x;
+			Y = y;
+		}
+
+		public bool Equals(Vector2D a)
+		{
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+			return X == a.X && Y == a.Y;
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+		}
+
+		public double Length
+		{
+			get { return Math.Sqrt(X * X + Y * Y); }
+		}
+
+		public double DistanceTo(Vector2D a)
+		{
+			var dx = X - a.X;
+			var dy = Y - a.Y;
+			return Math.Sqrt(dx * dx + dy * dy);
+		}
+	}
+
+	public class OrthoNormalBasis
+	{
+		public OrthoNormalBasis(Plane plane)
+		{
+		}
+		public Vector2D To2D(Vector3D a)
+		{
+			throw new NotImplementedException();
+		}
+		public Vector3D To3D(Vector2D a)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public class Line2D
+	{
+		public Vector2D Direction()
+		{
+			throw new NotImplementedException();
+		}
+		public static Line2D FromPoints(Vector2D a, Vector2D b)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
