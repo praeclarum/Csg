@@ -12,6 +12,9 @@ namespace Csg
 		public bool IsCanonicalized;
 		public bool IsRetesselated;
 
+		public const int DefaultResolution2D = 32;
+		public const int DefaultResolution3D = 12;
+
 		public static Csg FromPolygons(List<Polygon> polygons)
 		{
 			var csg = new Csg();
@@ -233,6 +236,7 @@ namespace Csg
 		{
 			throw new NotImplementedException();
 		}
+
 		public Plane GetPlane(Plane plane)
 		{
 			throw new NotImplementedException();

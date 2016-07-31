@@ -35,6 +35,7 @@
     <Compile Include="Tree.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="Vector.cs" />
+    <Compile Include="Solids.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

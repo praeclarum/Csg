@@ -12,26 +12,31 @@ namespace Csg
 			Y = y;
 			Z = z;
 		}
+
 		public double Length
 		{
-			get { throw new NotImplementedException(); }
+			get { return Math.Sqrt(X * X + Y * Y + Z * Z); }
 		}
 
-		public double Dot(Vector3D other)
+		public double Dot(Vector3D a)
 		{
-			throw new NotImplementedException();
+			return X * a.X + Y * a.Y + Z * a.Z;
 		}
 
-		public Vector3D Cross(Vector3D other)
+		public Vector3D Cross(Vector3D a)
 		{
-			throw new NotImplementedException();
+			return new Vector3D(
+				Y * a.Z - Z * a.Y,
+				Z * a.X - X * a.Z,
+				X * a.Y - Y*a.X);
 		}
 
 		public Vector3D Unit
 		{
 			get
 			{
-				throw new NotImplementedException();
+				var d = Length;
+				return new Vector3D(X / d, Y / d, Z / d);
 			}
 		}
 
@@ -47,15 +52,15 @@ namespace Csg
 
 		public static Vector3D operator +(Vector3D a, Vector3D b)
 		{
-			throw new NotImplementedException();
+			return new Vector3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 		}
 		public static Vector3D operator -(Vector3D a, Vector3D b)
 		{
-			throw new NotImplementedException();
+			return new Vector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
 		public static Vector3D operator *(Vector3D a, double b)
 		{
-			throw new NotImplementedException();
+			return new Vector3D(a.X * b, a.Y * b, a.Z*b);
 		}
 
 }

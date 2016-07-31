@@ -17,7 +17,7 @@ namespace Csg
 		BoundingSphere cachedBoundingSphere;
 		BoundingBox cachedBoundingBox;
 
-		public Polygon(List<Vertex> vertices, PolygonShared shared, Plane plane)
+		public Polygon(List<Vertex> vertices, PolygonShared shared = null, Plane plane = null)
 		{
 			this.vertices = vertices;
 			this.Shared = shared ?? defaultShared;
@@ -90,6 +90,10 @@ namespace Csg
 	public class Vertex
 	{
 		public Vector3D Pos;
+		public Vertex(Vector3D pos)
+		{
+			Pos = pos;
+		}
 	}
 
 	public class BoundingBox
