@@ -12,7 +12,9 @@ namespace Csg.Test
 			var sphere1 = Solids.Sphere(1, new Vector3D(-0.5, 0, 0));
 			var sphere2 = Solids.Sphere(1, new Vector3D(0.5, 0, 0));
 			var r = sphere1.Substract(sphere2);
-			Assert.AreEqual(72, r.Polygons.Count);
+			Assert.AreEqual(84, r.Polygons.Count);
+			Assert.IsTrue(r.IsCanonicalized);
+			Assert.IsTrue(r.IsRetesselated);
 		}
 	}
 }

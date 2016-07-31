@@ -710,18 +710,6 @@ namespace Csg
 		readonly FuzzyFactory<Plane> planefactory = new FuzzyFactory<Plane>(4, 1.0e-5);
 		readonly Dictionary<string, PolygonShared> polygonsharedfactory = new Dictionary<string, PolygonShared>();
 
-		public Csg GetCsg(Csg start)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Plane GetPlane(Plane sourceplane)
-		{
-			var elements = new[] { sourceplane.Normal.X, sourceplane.Normal.Y, sourceplane.Normal.Z, sourceplane.W };
-			var result = planefactory.LookupOrCreate(elements, els => sourceplane);
-			return result;
-		}
-		
 		public PolygonShared GetPolygonShared(PolygonShared sourceshared)
 		{
 			var hash = sourceshared.Hash;
@@ -735,6 +723,67 @@ namespace Csg
 				polygonsharedfactory.Add(hash, sourceshared);
 				return sourceshared;
 			}
+		}
+
+		public Vertex GetVertex(Vertex sourcevertex)
+		{
+			var elements = new[] { sourcevertex.Pos.X, sourcevertex.Pos.Y, sourcevertex.Pos.Z };
+			var result = vertexfactory.LookupOrCreate(elements, els => sourcevertex);
+			return result;
+		}
+
+		public Plane GetPlane(Plane sourceplane)
+		{
+			var elements = new[] { sourceplane.Normal.X, sourceplane.Normal.Y, sourceplane.Normal.Z, sourceplane.W };
+			var result = planefactory.LookupOrCreate(elements, els => sourceplane);
+			return result;
+		}
+
+		public Polygon GetPolygon(Polygon sourcepolygon)
+		{
+			var newplane = GetPlane(sourcepolygon.Plane);
+			var newshared = GetPolygonShared(sourcepolygon.Shared);
+			var newvertices = new List<Vertex>(sourcepolygon.Vertices);
+			for (int i = 0; i < newvertices.Count; i++)
+			{
+				newvertices[i] = GetVertex(newvertices[i]);
+			}
+			// two vertices that were originally very close may now have become
+			// truly identical (referring to the same CSG.Vertex object).
+			// Remove duplicate vertices:
+			var newvertices_dedup = new List<Vertex>();
+			if (newvertices.Count > 0)
+			{
+				var prevvertextag = newvertices[newvertices.Count - 1].Tag;
+				foreach (var vertex in newvertices) {
+					var vertextag = vertex.Tag;
+					if (vertextag != prevvertextag)
+					{
+						newvertices_dedup.Add(vertex);
+					}
+					prevvertextag = vertextag;
+				}
+			}
+			// If it's degenerate, remove all vertices:
+			if (newvertices_dedup.Count < 3)
+			{
+				newvertices_dedup = new List<Vertex>();
+			}
+			return new Polygon(newvertices_dedup, newshared, newplane);
+		}
+
+		public Csg GetCsg(Csg sourcecsg)
+		{
+			var newpolygons = new List<Polygon>();
+			foreach (var polygon in sourcecsg.Polygons)
+			{
+				var newpolygon = GetPolygon(polygon);
+				if (newpolygon.Vertices.Count >= 3)
+				{
+					newpolygons.Add(newpolygon);
+				}
+			}
+			return Csg.FromPolygons(newpolygons);
 		}
 	}
 

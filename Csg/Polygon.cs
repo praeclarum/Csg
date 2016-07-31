@@ -103,9 +103,21 @@ namespace Csg
 	public class Vertex
 	{
 		public Vector3D Pos;
+		int tag = 0;
 		public Vertex(Vector3D pos)
 		{
 			Pos = pos;
+		}
+		public int Tag
+		{
+			get
+			{
+				if (tag == 0)
+				{
+					tag = Csg.GetTag();
+				}
+				return tag;
+			}
 		}
 		public Vertex Flipped()
 		{
