@@ -57,12 +57,24 @@ namespace Csg
 
 		public void Invert()
 		{
-			throw new NotImplementedException();
+			var queue = new List<Node> { this };
+			for (var i = 0; i < queue.Count; i++)
+			{
+				var node = queue[i];
+				if (node.Plane != null) node.Plane = node.Plane.Flipped();
+				if (node.Front != null) queue.Add(node.Front);
+				if (node.Back != null) queue.Add(node.Back);
+				var temp = node.Front;
+				node.Front = node.Back;
+				node.Back = temp;
+			}
 		}
+
 		public void ClipTo(Tree tree, bool alsoRemoveCoplanarFront)
 		{
 			throw new NotImplementedException();
 		}
+
 		public void AddPolygonTreeNodes(List<PolygonTreeNode> addpolygontreenodes)
 		{
 			var args = new Args { Node = this, PolygonTreeNodes = addpolygontreenodes };

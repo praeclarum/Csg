@@ -55,6 +55,14 @@ namespace Csg
 			}
 		}
 
+		public Vector3D Negated
+		{
+			get
+			{
+				return new Vector3D(-X, -Y, -Z);
+			}
+		}
+
 		public Vector3D Min(Vector3D other)
 		{
 			return new Vector3D(Math.Min(X, other.X), Math.Min(Y, other.Y), Math.Min(Z, other.Z));

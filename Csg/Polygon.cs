@@ -74,7 +74,14 @@ namespace Csg
 
 		public Polygon Flipped()
 		{
-			throw new NotImplementedException();
+			var newvertices = new List<Vertex>(Vertices.Count);
+			for (int i = 0; i < Vertices.Count; i++)
+			{
+				newvertices.Add(Vertices[i].Flipped());
+			}
+			newvertices.Reverse();
+			var newplane = Plane.Flipped();
+			return new Polygon(newvertices, Shared, newplane);
 		}
 	}
 
@@ -92,6 +99,10 @@ namespace Csg
 		public Vertex(Vector3D pos)
 		{
 			Pos = pos;
+		}
+		public Vertex Flipped()
+		{
+			return this;
 		}
 		public override string ToString() => Pos.ToString();
 	}
@@ -137,6 +148,10 @@ namespace Csg
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 			return Normal.Equals(n.Normal) && W == n.W;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+		}
+		public Plane Flipped()
+		{
+			return new Plane(Normal.Negated, -W);
 		}
 		public SplitPolygonResult SplitPolygon(Polygon polygon)
 		{
