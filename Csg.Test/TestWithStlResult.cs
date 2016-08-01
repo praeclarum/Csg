@@ -13,7 +13,13 @@ namespace Csg.Test
 			var rname = $"{fixtureName}.{testName}_.stl";
 			var asmPath = System.Reflection.Assembly.GetCallingAssembly().Location;
 			var repoPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(asmPath)));
+
 			var resultsPath = Path.Combine(repoPath, "Results");
+			if (!Directory.Exists(resultsPath))
+			{
+				Directory.CreateDirectory(resultsPath);
+			}
+
 			var acceptedPath = Path.Combine(resultsPath, aname);
 			var rejectedPath = Path.Combine(resultsPath, rname);
 			File.Delete(rejectedPath);
