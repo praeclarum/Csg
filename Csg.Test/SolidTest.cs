@@ -5,9 +5,9 @@ using NUnit.Framework;
 
 namespace Csg.Test
 {
-	public class TestWithStlResult
+	public class SolidTest
 	{
-		protected void AssertAccepted(Csg csg, string fixtureName, [CallerMemberName] string testName = "")
+		protected void AssertAcceptedStl(Csg csg, string fixtureName, [CallerMemberName] string testName = "")
 		{
 			var aname = $"{fixtureName}.{testName}.stl";
 			var rname = $"{fixtureName}.{testName}_.stl";

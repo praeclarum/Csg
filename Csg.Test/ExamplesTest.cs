@@ -6,7 +6,7 @@ using static Csg.Script;
 namespace Csg.Test
 {
 	[TestFixture]
-	public class ExamplesTest : TestWithStlResult
+	public class ExamplesTest : SolidTest
 	{
 		[Test]
 		public void OpenJsCadLogo()
@@ -22,7 +22,7 @@ namespace Csg.Test
 						Cube(size: 2.1, center: true)
 					)
 				).Translate(0, 0, 1.5).Scale(10);
-			AssertAccepted(r, "OpenJsCadLogo");
+			AssertAcceptedStl(r, "OpenJsCadLogo");
 		}
 	}
 }

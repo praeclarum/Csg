@@ -37,7 +37,7 @@
     <Compile Include="SubtractTest.cs" />
     <Compile Include="UnionTest.cs" />
     <Compile Include="IntersectTest.cs" />
-    <Compile Include="TestWithStlResult.cs" />
+    <Compile Include="SolidTest.cs" />
     <Compile Include="ExamplesTest.cs" />
     <Compile Include="CubeTest.cs" />
   </ItemGroup>

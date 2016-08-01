@@ -4,7 +4,7 @@ using System;
 namespace Csg.Test
 {
 	[TestFixture]
-	public class CubeTest : TestWithStlResult
+	public class CubeTest : SolidTest
 	{
 		[Test]
 		public void Unit()
@@ -14,7 +14,7 @@ namespace Csg.Test
 			var p0 = s.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.9);
 			Assert.LessOrEqual(p0.Plane.W, 1.1);
-			AssertAccepted(s, "CubeTest");
+			AssertAcceptedStl(s, "CubeTest");
 		}
 
 		[Test]
@@ -24,7 +24,7 @@ namespace Csg.Test
 			var p0 = s.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.9e12);
 			Assert.LessOrEqual(p0.Plane.W, 1.1e12);
-			AssertAccepted(s, "CubeTest");
+			AssertAcceptedStl(s, "CubeTest");
 		}
 	}
 }

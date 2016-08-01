@@ -4,7 +4,7 @@ using System;
 namespace Csg.Test
 {
 	[TestFixture]
-	public class SubtractTest : TestWithStlResult
+	public class SubtractTest : SolidTest
 	{
 		[Test]
 		public void UnitSphere_UnitSphere()
@@ -15,7 +15,7 @@ namespace Csg.Test
 			Assert.AreEqual(84, r.Polygons.Count);
 			Assert.IsTrue(r.IsCanonicalized);
 			Assert.IsTrue(r.IsRetesselated);
-			AssertAccepted(r, "SubtractTest");
+			AssertAcceptedStl(r, "SubtractTest");
 		}
 
 		[Test]
@@ -27,7 +27,7 @@ namespace Csg.Test
 			Assert.AreEqual(72, r.Polygons.Count);
 			Assert.IsTrue(r.IsCanonicalized);
 			Assert.IsTrue(r.IsRetesselated);
-			AssertAccepted(r, "SubtractTest");
+			AssertAcceptedStl(r, "SubtractTest");
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System;
 namespace Csg.Test
 {
 	[TestFixture]
-	public class IntersectTest : TestWithStlResult
+	public class IntersectTest : SolidTest
 	{
 		[Test]
 		public void UnitSphere_UnitSphere()
@@ -15,7 +15,7 @@ namespace Csg.Test
 			Assert.AreEqual(32, r.Polygons.Count);
 			Assert.IsTrue(r.IsCanonicalized);
 			Assert.IsTrue(r.IsRetesselated);
-			AssertAccepted(r, "IntersectTest");
+			AssertAcceptedStl(r, "IntersectTest");
 		}
 
 		[Test]
@@ -27,7 +27,7 @@ namespace Csg.Test
 			Assert.AreEqual(0, r.Polygons.Count);
 			Assert.IsTrue(r.IsCanonicalized);
 			Assert.IsTrue(r.IsRetesselated);
-			AssertAccepted(r, "IntersectTest");
+			AssertAcceptedStl(r, "IntersectTest");
 		}
 	}
 }
