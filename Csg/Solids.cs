@@ -1,10 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Csg
 {
 	public static class Solids
 	{
+		static readonly int[][][] cubeData =
+			{
+				new[] {
+					new[] { 0, 4, 6, 2 },
+					new[] { -1, 0, 0 }
+				},
+				new[] {
+					new[] {1, 3, 7, 5},
+					new[] {+1, 0, 0}
+				},
+				new[] {
+					new[] {0, 1, 5, 4},
+					new[] {0, -1, 0},
+				},
+				new[] {
+					new[] {2, 6, 7, 3},
+					new[] { 0, +1, 0}
+				},
+				new[] {
+					new[] {0, 2, 3, 1},
+					new[] { 0, 0, -1}
+				},
+				new[] {
+					new[] {4, 5, 7, 6},
+					new[] { 0, 0, +1}
+				}
+			};
+
+		public static Csg Cube(CubeOptions options)
+		{
+			var c = options.Center;
+			var r = options.Radius.Abs; // negative radii make no sense
+			var result = Csg.FromPolygons(cubeData.Select(info =>
+			{
+				//var normal = new CSG.Vector3D(info[1]);
+				//var plane = new CSG.Plane(normal, 1);
+				var vertices = info[0].Select(i =>
+				{
+					var pos = new Vector3D(
+						c.X + r.X * (2 * ((i & 1) != 0 ? 1 : 0) - 1),
+							c.Y + r.Y * (2 * ((i & 2) != 0 ? 1 : 0) - 1),
+							c.Z + r.Z * (2 * ((i & 4) != 0 ? 1 : 0) - 1));
+					return new Vertex(pos);
+				});
+				return new Polygon(vertices.ToList());
+			}).ToList());
+			return result;
+		}
+
+		public static Csg Cube(Vector3D radius, Vector3D center)
+		{
+			return Cube(new CubeOptions { Radius = radius, Center = center });
+		}
+
 		public static Csg Sphere(SphereOptions options)
 		{
 			var center = options.Center;
@@ -68,6 +123,12 @@ namespace Csg
 		{
 			return Sphere(new SphereOptions { Radius = radius, Center = center, Resolution = resolution });
 		}
+	}
+
+	public class CubeOptions
+	{
+		public Vector3D Center;
+		public Vector3D Radius = new Vector3D(1, 1, 1);
 	}
 
 	public class SphereOptions
