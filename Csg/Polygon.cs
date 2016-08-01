@@ -104,10 +104,12 @@ namespace Csg
 	{
 		public Vector3D Pos;
 		int tag = 0;
+
 		public Vertex(Vector3D pos)
 		{
 			Pos = pos;
 		}
+
 		public int Tag
 		{
 			get
@@ -119,11 +121,46 @@ namespace Csg
 				return tag;
 			}
 		}
+
 		public Vertex Flipped()
 		{
 			return this;
 		}
+
 		public override string ToString() => Pos.ToString();
+
+		public Vertex Transform(Matrix4x4 matrix4x4)
+		{
+			var newpos = Pos * matrix4x4;
+			return new Vertex(newpos);
+		}
+	}
+
+	public class Properties
+	{
+		public readonly Dictionary<string, object> All = new Dictionary<string, object>();
+		public Properties Merge(Properties otherproperties)
+		{
+			var result = new Properties();
+			foreach (var x in All)
+			{
+				result.All.Add(x.Key, x.Value);
+			}
+			foreach (var x in otherproperties.All)
+			{
+				result.All[x.Key] = x.Value;
+			}
+			return result;
+		}
+		public Properties Transform(Matrix4x4 matrix4x4)
+		{
+			var result = new Properties();
+			foreach (var x in All)
+			{
+				result.All.Add(x.Key, x.Value);
+			}
+			return result;
+		}
 	}
 
 	public class BoundingBox
@@ -310,6 +347,31 @@ namespace Csg
 		{
 			var n = (b - a).Cross(c - a).Unit;
 			return new Plane(n, n.Dot(a));
+		}
+		public Plane Transform(Matrix4x4 matrix4x4)
+		{
+			var ismirror = matrix4x4.IsMirroring;
+			// get two vectors in the plane:
+			var r = this.Normal.RandomNonParallelVector();
+			var u = this.Normal.Cross(r);
+			var v = this.Normal.Cross(u);
+			// get 3 points in the plane:
+			var point1 = this.Normal * (this.W);
+			var point2 = point1 + (u);
+			var point3 = point1 + (v);
+			// transform the points:
+			point1 = point1 * (matrix4x4);
+			point2 = point2 * (matrix4x4);
+			point3 = point3 * (matrix4x4);
+			// and create a new plane from the transformed points:
+			var newplane = Plane.FromVector3Ds(point1, point2, point3);
+			if (ismirror)
+			{
+				// the transform is mirroring
+				// We should mirror the plane:
+				newplane = newplane.Flipped();
+			}
+			return newplane;
 		}
 	}
 

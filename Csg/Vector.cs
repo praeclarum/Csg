@@ -93,6 +93,10 @@ namespace Csg
 		{
 			return new Vector3D(a.X * b, a.Y * b, a.Z * b);
 		}
+		public static Vector3D operator *(Vector3D a, Matrix4x4 b)
+		{
+			return b.LeftMultiply1x3Vector(a);
+		}
 
 		public override string ToString()
 		{
@@ -209,14 +213,14 @@ namespace Csg
 	public class Line2D
 	{
 		readonly Vector2D normal;
-		readonly double w;
+		//readonly double w;
 		public Line2D(Vector2D normal, double w)
 		{
 			var l = normal.Length;
 			w *= l;
 			normal = normal * (1.0 / l);
 			this.normal = normal;
-			this.w = w;
+			//this.w = w;
 		}
 		public Vector2D Direction => normal.Normal;
 		public static Line2D FromPoints(Vector2D p1, Vector2D p2)
@@ -225,6 +229,60 @@ namespace Csg
 			var normal = direction.Normal.Negated.Unit;
 			var w = p1.Dot(normal);
 			return new Line2D(normal, w);
+		}
+	}
+
+	public class Matrix4x4
+	{
+		readonly double[] elements;
+
+		public bool IsMirroring = false;
+
+		public Matrix4x4(double[] els)
+		{
+			elements = els;
+		}
+
+		public Matrix4x4()
+			: this(new double[16])
+		{
+		}
+
+		public static Matrix4x4 Scaling(Vector3D vec)
+		{
+			var els = new[] {
+				vec.X, 0, 0, 0, 0, vec.Y, 0, 0, 0, 0, vec.Z, 0, 0, 0, 0, 1
+			};
+			return new Matrix4x4(els);
+		}
+
+		public static Matrix4x4 Translation(Vector3D vec)
+		{
+			var els = new[] {
+				1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, vec.X, vec.Y, vec.Z, 1
+			};
+			return new Matrix4x4(els);
+		}
+
+		public Vector3D LeftMultiply1x3Vector(Vector3D v)
+		{
+			var v0 = v.X;
+			var v1 = v.Y;
+			var v2 = v.Z;
+			var v3 = 1;
+			var x = v0 * this.elements[0] + v1 * this.elements[4] + v2 * this.elements[8] + v3 * this.elements[12];
+			var y = v0 * this.elements[1] + v1 * this.elements[5] + v2 * this.elements[9] + v3 * this.elements[13];
+			var z = v0 * this.elements[2] + v1 * this.elements[6] + v2 * this.elements[10] + v3 * this.elements[14];
+			var w = v0 * this.elements[3] + v1 * this.elements[7] + v2 * this.elements[11] + v3 * this.elements[15];
+			// scale such that fourth element becomes 1:
+			if (w != 1)
+			{
+				var invw = 1.0 / w;
+				x *= invw;
+				y *= invw;
+				z *= invw;
+			}
+			return new Vector3D(x, y, z);
 		}
 	}
 }

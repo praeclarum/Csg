@@ -38,6 +38,7 @@
     <Compile Include="UnionTest.cs" />
     <Compile Include="IntersectTest.cs" />
     <Compile Include="TestWithStlResult.cs" />
+    <Compile Include="ExamplesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -143,6 +143,70 @@ namespace Csg
 			return result;
 		}
 
+		public Csg Transform(Matrix4x4 matrix4x4)
+		{
+			var ismirror = matrix4x4.IsMirroring;
+			var transformedvertices = new Dictionary<int, Vertex>();
+			var transformedplanes = new Dictionary<int, Plane>();
+			var newpolygons = new List<Polygon>();
+			foreach (var p in Polygons)
+			{
+				Plane newplane;
+				var plane = p.Plane;
+				var planetag = plane.Tag;
+				if (transformedplanes.ContainsKey(planetag)) {
+					newplane = transformedplanes[planetag];
+				} else {
+					newplane = plane.Transform(matrix4x4);
+					transformedplanes[planetag] = newplane;
+				}
+				var newvertices = new List<Vertex>();
+				foreach (var v in p.Vertices) {
+					Vertex newvertex;
+					var vertextag = v.Tag;
+					if (transformedvertices.ContainsKey(vertextag)) {
+						newvertex = transformedvertices[vertextag];
+					} else {
+						newvertex = v.Transform(matrix4x4);
+						transformedvertices[vertextag] = newvertex;
+					}
+					newvertices.Add(newvertex);
+				}
+				if (ismirror) newvertices.Reverse();
+				newpolygons.Add(new Polygon(newvertices, p.Shared, newplane));
+			}
+			var result = Csg.FromPolygons(newpolygons);
+			result.Properties = this.Properties.Transform(matrix4x4);
+			result.IsRetesselated = this.IsRetesselated;
+			result.IsCanonicalized = this.IsCanonicalized;
+			return result;
+		}
+
+		public Csg Translate(Vector3D offset)
+		{
+			return Transform(Matrix4x4.Translation(offset));
+		}
+
+		public Csg Translate(double x, double y, double z)
+		{
+			return Transform(Matrix4x4.Translation(new Vector3D(x, y, z)));
+		}
+
+		public Csg Scale(Vector3D scale)
+		{
+			return Transform(Matrix4x4.Scaling(scale));
+		}
+
+		public Csg Scale(double scale)
+		{
+			return Transform(Matrix4x4.Scaling(new Vector3D(scale, scale, scale)));
+		}
+
+		public Csg Scale(double x, double y, double z)
+		{
+			return Transform(Matrix4x4.Scaling(new Vector3D(x, y, z)));
+		}
+
 		Csg Canonicalized()
 		{
 			if (IsCanonicalized)
@@ -295,7 +359,7 @@ namespace Csg
 					if (numvertices > 0)
 					{
 						double miny = 0, maxy = 0;
-						int maxindex;
+						//int maxindex;
 						for (var i = 0; i < numvertices; i++)
 						{
 							var pos2d = orthobasis.To2D(poly3d.Vertices[i].Pos);
@@ -330,7 +394,7 @@ namespace Csg
 							if ((i == 0) || (y > maxy))
 							{
 								maxy = y;
-								maxindex = i;
+								//maxindex = i;
 							}
 							if (!(ycoordinatetopolygonindexes.ContainsKey(y)))
 							{
@@ -730,24 +794,6 @@ namespace Csg
 		public static int GetTag()
 		{
 			return staticTag++;
-		}
-	}
-
-	public class Properties
-	{
-		public readonly Dictionary<string, object> All = new Dictionary<string, object>();
-		public Properties Merge(Properties otherproperties)
-		{
-			var result = new Properties();
-			foreach (var x in All)
-			{
-				result.All.Add(x.Key, x.Value);
-			}
-			foreach (var x in otherproperties.All)
-			{
-				result.All[x.Key] = x.Value;
-			}
-			return result;
 		}
 	}
 
