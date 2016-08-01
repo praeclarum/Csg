@@ -60,6 +60,19 @@ namespace Csg
 			return Cube(new CubeOptions { Radius = radius, Center = center });
 		}
 
+		public static Csg Cube(double radius, Vector3D center)
+		{
+			var radius3 = new Vector3D(radius, radius, radius);
+			return Cube(new CubeOptions { Radius = radius3, Center = center });
+		}
+
+		public static Csg Cube(double radius)
+		{
+			var center = new Vector3D(0, 0, 0);
+			var radius3 = new Vector3D(radius, radius, radius);
+			return Cube(new CubeOptions { Radius = radius3, Center = center });
+		}
+
 		public static Csg Sphere(SphereOptions options)
 		{
 			var center = options.Center;
