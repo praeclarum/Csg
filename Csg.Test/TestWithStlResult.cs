@@ -13,11 +13,11 @@ namespace Csg.Test
 			var rname = $"{fixtureName}.{testName}_.stl";
 			var asmPath = System.Reflection.Assembly.GetCallingAssembly().Location;
 			var repoPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(asmPath)));
-
 			var resultsPath = Path.Combine(repoPath, "Results");
 			if (!Directory.Exists(resultsPath))
 			{
-				Directory.CreateDirectory(resultsPath);
+				Console.WriteLine("Test results could not be found at {0}", resultsPath);
+				return;
 			}
 
 			var acceptedPath = Path.Combine(resultsPath, aname);
