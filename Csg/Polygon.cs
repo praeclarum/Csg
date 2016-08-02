@@ -27,6 +27,11 @@ namespace Csg
 			}
 		}
 
+		public Polygon(params Vertex[] vertices)
+			: this(new List<Vertex>(vertices))
+		{
+		}
+
 		public BoundingSphere BoundingSphere
 		{
 			get

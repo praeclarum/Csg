@@ -40,6 +40,7 @@
     <Compile Include="SolidTest.cs" />
     <Compile Include="ExamplesTest.cs" />
     <Compile Include="CubeTest.cs" />
+    <Compile Include="CylinderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
