@@ -41,7 +41,7 @@ namespace Csg.Viewer.Mac
 			cameraNode.Camera = SCNCamera.Create();
 			cameraNode.Camera.YFov = 60;
 			cameraNode.Camera.ZNear = 1;
-			cameraNode.Camera.ZFar = 1000;
+			cameraNode.Camera.ZFar = 10000;
 			cameraNode.Position = new SCNVector3(0, 0, 300);
 			scene.RootNode.Add(cameraNode);
 		}
@@ -51,6 +51,7 @@ namespace Csg.Viewer.Mac
 			base.WindowDidLoad();
 
 			sceneView.Scene = scene;
+			sceneView.AutoenablesDefaultLighting = true;
 
 			solidNode = workspace.Node;
 

@@ -22,8 +22,18 @@ namespace Csg.Viewer.Mac
 					SelectMany(x => x.Vertices).
 					Select(ToSCNVector3).
 					ToArray();
+				var norms =
+					csg.
+					Polygons.
+					SelectMany(x =>
+					{
+						var n = x.Plane.Normal.ToSCNVector3();
+						return x.Vertices.Select(_ => n);
+					}).
+					ToArray();
 				var vertsSource = SCNGeometrySource.FromVertices(verts);
-				var sources = new[] { vertsSource };
+				var normsSource = SCNGeometrySource.FromNormals(norms);
+				var sources = new[] { vertsSource, normsSource };
 				var triStream = new System.IO.MemoryStream();
 				var triWriter = new System.IO.BinaryWriter(triStream);
 				var triCount = 0;
@@ -45,8 +55,7 @@ namespace Csg.Viewer.Mac
 				var elements = new[] { elem };
 
 				var g = SCNGeometry.Create(sources, elements);
-				g.FirstMaterial.Diffuse.ContentColor = NSColor.Gray;
-
+				g.FirstMaterial.Diffuse.ContentColor = NSColor.LightGray;
 				return g;
 			}
 		}
