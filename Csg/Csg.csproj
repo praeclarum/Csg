@@ -36,7 +36,6 @@
     <Compile Include="Vector.cs" />
     <Compile Include="Solids.cs" />
     <Compile Include="Formats.cs" />
-    <Compile Include="Script.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

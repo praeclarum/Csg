@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using static Csg.Solids;
 
 namespace Csg.Test
 {
@@ -9,7 +10,7 @@ namespace Csg.Test
 		[Test]
 		public void Unit()
 		{
-			var s = Script.Cube(1);
+			var s = Cube(1);
 			Assert.AreEqual(6, s.Polygons.Count);
 			AssertAcceptedStl(s, "CubeTest");
 		}
@@ -17,7 +18,7 @@ namespace Csg.Test
 		[Test]
 		public void UnitNonCentered()
 		{
-			var s = Script.Cube(1, center: false);
+			var s = Cube(1, center: false);
 			Assert.AreEqual(6, s.Polygons.Count);
 			AssertAcceptedStl(s, "CubeTest");
 		}
@@ -25,7 +26,7 @@ namespace Csg.Test
 		[Test]
 		public void UnitCentered()
 		{
-			var s = Script.Cube(1, center: true);
+			var s = Cube(1, center: true);
 			Assert.AreEqual(6, s.Polygons.Count);
 			var p0 = s.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.4);
@@ -36,7 +37,7 @@ namespace Csg.Test
 		[Test]
 		public void BigRadius()
 		{
-			var s = Script.Cube(1.0e12);
+			var s = Cube(1.0e12);
 			AssertAcceptedStl(s, "CubeTest");
 		}
 	}

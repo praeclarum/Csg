@@ -1,15 +1,21 @@
 using Csg;
-using static Csg.Script;
+using static Csg.Solids;
+
+public class Servo
+{
+    public Solid GetSolid()
+    {
+        return Cube();
+    }
+}
+
 
 public static class Servos
 {
-    public static Solid Servo()
-    {
-        return Difference(Sphere(200, center: true), Sphere(90, center:false));
-    }
     public static Solid Main()
     {
-        return Servo();
+        var s = new Servo();
+        return s.GetSolid();
     }
 }
 

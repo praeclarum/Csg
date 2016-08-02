@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
-
-using static Csg.Script;
+using static Csg.Solids;
 
 namespace Csg.Test
 {

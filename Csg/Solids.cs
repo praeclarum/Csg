@@ -6,34 +6,6 @@ namespace Csg
 {
 	public static class Solids
 	{
-		static readonly int[][][] cubeData =
-			{
-				new[] {
-					new[] { 0, 4, 6, 2 },
-					new[] { -1, 0, 0 }
-				},
-				new[] {
-					new[] {1, 3, 7, 5},
-					new[] {+1, 0, 0}
-				},
-				new[] {
-					new[] {0, 1, 5, 4},
-					new[] {0, -1, 0},
-				},
-				new[] {
-					new[] {2, 6, 7, 3},
-					new[] { 0, +1, 0}
-				},
-				new[] {
-					new[] {0, 2, 3, 1},
-					new[] { 0, 0, -1}
-				},
-				new[] {
-					new[] {4, 5, 7, 6},
-					new[] { 0, 0, +1}
-				}
-			};
-
 		public static Solid Cube(CubeOptions options)
 		{
 			var c = options.Center;
@@ -53,6 +25,13 @@ namespace Csg
 				return new Polygon(vertices.ToList());
 			}).ToList());
 			return result;
+		}
+
+		public static Solid Cube(double size = 1, bool center = false)
+		{
+			var r = new Vector3D(size / 2, size / 2, size / 2);
+			var c = center ? new Vector3D(0, 0, 0) : r;
+			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
 		}
 
 		public static Solid Sphere(SphereOptions options)
@@ -110,6 +89,95 @@ namespace Csg
 			var result = Solid.FromPolygons(polygons);
 			return result;
 		}
+
+		public static Solid Sphere(double r = 1, bool center = true)
+		{
+			var c = center ? new Vector3D(0, 0, 0) : new Vector3D(r, r, r);
+			return Solids.Sphere(new SphereOptions { Radius = r, Center = c });
+		}
+
+		public static Solid Sphere(double r, Vector3D center)
+		{
+			return Solids.Sphere(new SphereOptions { Radius = r, Center = center });
+		}
+
+		public static Solid Union(params Solid[] csgs)
+		{
+			if (csgs.Length == 0)
+			{
+				return new Solid();
+			}
+			else if (csgs.Length == 1)
+			{
+				return csgs[0];
+			}
+			else
+			{
+				var head = csgs[0];
+				var rest = csgs.Skip(1).ToArray();
+				return head.Union(rest);
+			}
+		}
+
+		public static Solid Difference(params Solid[] csgs)
+		{
+			if (csgs.Length == 0)
+			{
+				return new Solid();
+			}
+			else if (csgs.Length == 1)
+			{
+				return csgs[0];
+			}
+			else
+			{
+				var head = csgs[0];
+				var rest = csgs.Skip(1).ToArray();
+				return head.Substract(rest);
+			}
+		}
+
+		public static Solid Intersection(params Solid[] csgs)
+		{
+			if (csgs.Length == 0 || csgs.Length == 1)
+			{
+				return new Solid();
+			}
+			else
+			{
+				var head = csgs[0];
+				var rest = csgs.Skip(1).ToArray();
+				return head.Intersect(rest);
+			}
+		}
+
+		static readonly int[][][] cubeData =
+			{
+				new[] {
+					new[] { 0, 4, 6, 2 },
+					new[] { -1, 0, 0 }
+				},
+				new[] {
+					new[] {1, 3, 7, 5},
+					new[] {+1, 0, 0}
+				},
+				new[] {
+					new[] {0, 1, 5, 4},
+					new[] {0, -1, 0},
+				},
+				new[] {
+					new[] {2, 6, 7, 3},
+					new[] { 0, +1, 0}
+				},
+				new[] {
+					new[] {0, 2, 3, 1},
+					new[] { 0, 0, -1}
+				},
+				new[] {
+					new[] {4, 5, 7, 6},
+					new[] { 0, 0, +1}
+				}
+			};
 	}
 
 	public class CubeOptions
