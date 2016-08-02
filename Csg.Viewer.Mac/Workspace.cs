@@ -18,9 +18,9 @@ namespace Csg.Viewer.Mac
 		string path = "";
 		SCNNode node = SCNNode.Create();
 
-		public byte[] Bytes => bytes;
 		public string FilePath => path;
 		public SCNNode Node => node;
+		public byte[] Bytes => bytes;
 
 		public event Action NodeChanged;
 
@@ -40,6 +40,7 @@ namespace Csg.Viewer.Mac
 		{
 			this.bytes = newBytes;
 			this.path = newPath;
+
 			CreateNodeAsync(newBytes, newPath).ContinueWith(t =>
 			{
 				if (t.IsFaulted)
@@ -47,6 +48,19 @@ namespace Csg.Viewer.Mac
 					Console.WriteLine(t.Exception);
 				}
 			});
+		}
+
+		public void Reload()
+		{
+			try
+			{
+				var newBytes = File.ReadAllBytes(path);
+				SetBytes(newBytes, path);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
 		}
 
 		Task CreateNodeAsync(byte[] newBytes, string newPath)
@@ -78,15 +92,10 @@ namespace Csg.Viewer.Mac
 			});
 		}
 
-		static Csg CreateCsgFromCSharp(byte[] bytes, string path)
-		{
-			var text = new System.IO.StreamReader(new System.IO.MemoryStream(bytes)).ReadToEnd();
-			if (string.IsNullOrEmpty(text))
-			{
-				return new Csg();
-			}
+		static readonly MetadataReference[] references;
 
-			var tree = CSharpSyntaxTree.ParseText(text);
+		static Workspace()
+		{
 			var refs = new List<MetadataReference> {
 				MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
 				MetadataReference.CreateFromFile(typeof(System.Linq.Enumerable).Assembly.Location),
@@ -97,14 +106,26 @@ namespace Csg.Viewer.Mac
 			{
 				refs.Add(MetadataReference.CreateFromFile(f));
 			}
+			references = refs.ToArray();
+		}
+
+		static Csg CreateCsgFromCSharp(byte[] bytes, string path)
+		{
+			var text = new System.IO.StreamReader(new System.IO.MemoryStream(bytes)).ReadToEnd();
+			if (string.IsNullOrEmpty(text))
+			{
+				return new Csg();
+			}
+
+			var tree = CSharpSyntaxTree.ParseText(text);
+
 			var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-			var comp = CSharpCompilation.Create("CsgExec", new[] { tree }, refs, options);
+			var comp = CSharpCompilation.Create("a" + Guid.NewGuid().ToString("N"), new[] { tree }, references, options);
 			var asmStream = new System.IO.MemoryStream();
 			var e = comp.Emit(asmStream);
 			if (e.Success)
 			{
 				var asm = System.Reflection.Assembly.Load(asmStream.ToArray());
-				Console.WriteLine(asm);
 				var mainMethod =
 					asm.
 					GetTypes().
@@ -116,7 +137,12 @@ namespace Csg.Viewer.Mac
 					throw new Exception("Could not find Main method.");
 				}
 				else {
-					return (Csg)mainMethod.Invoke(null, null);
+					var sw = new System.Diagnostics.Stopwatch();
+					sw.Start();
+					var csg = (Csg)mainMethod.Invoke(null, null);
+					sw.Stop();
+					Console.WriteLine("CSG with {0} polygons in {1}", csg.Polygons.Count, sw.Elapsed);
+					return csg;
 				}
 			}
 			else {

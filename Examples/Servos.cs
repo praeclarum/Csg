@@ -5,7 +5,7 @@ public static class Servos
 {
     public static Csg.Csg Servo()
     {
-        return Difference(Sphere(100, center: true), Sphere(100, center:false));
+        return Difference(Cube(200, center: true), Sphere(80, center:false));
     }
     public static Csg.Csg Main()
     {

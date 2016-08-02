@@ -11,8 +11,11 @@ namespace Csg.Viewer.Mac
 	{
 		readonly Workspace workspace;
 		readonly SCNScene scene = SCNScene.Create();
+		readonly SCNNode cameraNode = SCNNode.Create();
 
 		SCNNode solidNode = null;
+
+		public Workspace Workspace => workspace;
 
 		public MainWindowController(IntPtr handle) : base(handle)
 		{
@@ -34,8 +37,7 @@ namespace Csg.Viewer.Mac
 		}
 
 		void Initialize()
-		{
-			var cameraNode = SCNNode.Create();
+		{			
 			cameraNode.Camera = SCNCamera.Create();
 			cameraNode.Camera.YFov = 60;
 			cameraNode.Camera.ZNear = 1;
@@ -59,8 +61,17 @@ namespace Csg.Viewer.Mac
 
 		void Workspace_NodeChanged()
 		{
-			solidNode.RemoveFromParentNode();
-			scene.RootNode.Add(workspace.Node);
+			BeginInvokeOnMainThread(() =>
+			{
+				solidNode.RemoveFromParentNode();
+				solidNode = workspace.Node;
+				var c = SCNVector3.Zero;
+				nfloat r = 1.0f;
+				solidNode.GetBoundingSphere(ref c, ref r);
+				scene.RootNode.Add(solidNode);
+				cameraNode.Camera.YFov = 60;
+				cameraNode.Position = new SCNVector3(0, 0, (float)r * 2.5f);
+			});
 		}
 
 		public override void AwakeFromNib()
