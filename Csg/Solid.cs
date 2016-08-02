@@ -187,7 +187,7 @@ namespace Csg
 			return Transform(Matrix4x4.Translation(offset));
 		}
 
-		public Solid Translate(double x, double y, double z)
+		public Solid Translate(double x = 0, double y = 0, double z = 0)
 		{
 			return Transform(Matrix4x4.Translation(new Vector3D(x, y, z)));
 		}

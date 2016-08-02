@@ -93,6 +93,10 @@ namespace Csg
 		{
 			return new Vector3D(a.X * b, a.Y * b, a.Z * b);
 		}
+		public static Vector3D operator /(Vector3D a, double b)
+		{
+			return new Vector3D(a.X / b, a.Y / b, a.Z / b);
+		}
 		public static Vector3D operator *(Vector3D a, Matrix4x4 b)
 		{
 			return b.LeftMultiply1x3Vector(a);
@@ -178,6 +182,10 @@ namespace Csg
 		public static Vector2D operator *(Vector2D a, double b)
 		{
 			return new Vector2D(a.X * b, a.Y * b);
+		}
+		public static Vector2D operator /(Vector2D a, double b)
+		{
+			return new Vector2D(a.X / b, a.Y / b);
 		}
 
 		public override string ToString()
