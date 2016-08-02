@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Foundation;
 using SceneKit;
@@ -32,15 +33,6 @@ namespace Csg.Viewer.Mac
 			Initialize();
 		}
 
-		public override void WindowDidLoad()
-		{
-			base.WindowDidLoad();
-
-			sceneView.Scene = scene;
-
-			workspace.BytesChanged += Workspace_BytesChanged;
-		}
-
 		void Initialize()
 		{
 			var cameraNode = SCNNode.Create();
@@ -50,20 +42,25 @@ namespace Csg.Viewer.Mac
 			cameraNode.Camera.ZFar = 1000;
 			cameraNode.Position = new SCNVector3(0, 0, 300);
 			scene.RootNode.Add(cameraNode);
-			SetCsg();
 		}
 
-		void SetCsg()
+		public override void WindowDidLoad()
 		{
-			var csg = Solids.Sphere(100);
-			if (solidNode != null) solidNode.RemoveFromParentNode();
-			solidNode = csg.ToSCNNode();
+			base.WindowDidLoad();
+
+			sceneView.Scene = scene;
+
+			solidNode = workspace.Node;
+
 			scene.RootNode.Add(solidNode);
+
+			workspace.NodeChanged += Workspace_NodeChanged;
 		}
 
-		void Workspace_BytesChanged()
+		void Workspace_NodeChanged()
 		{
-			SetCsg();
+			solidNode.RemoveFromParentNode();
+			scene.RootNode.Add(workspace.Node);
 		}
 
 		public override void AwakeFromNib()

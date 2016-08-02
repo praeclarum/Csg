@@ -57,6 +57,18 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.Mac" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\packages\System.Reflection.Metadata.1.3.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.3.2\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.3.2\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcons.appiconset\Contents.json" />
@@ -74,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -99,6 +112,398 @@
       <Project>{2927716B-0E82-45A0-B6E2-8495CF5B600E}</Project>
       <Name>Csg</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\Microsoft.Win32.Primitives.dll">
+      <Link>Facades\Microsoft.Win32.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\Microsoft.Win32.Registry.AccessControl.dll">
+      <Link>Facades\Microsoft.Win32.Registry.AccessControl.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\Microsoft.Win32.Registry.dll">
+      <Link>Facades\Microsoft.Win32.Registry.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.AppContext.dll">
+      <Link>Facades\System.AppContext.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Collections.Concurrent.dll">
+      <Link>Facades\System.Collections.Concurrent.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Collections.NonGeneric.dll">
+      <Link>Facades\System.Collections.NonGeneric.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Collections.Specialized.dll">
+      <Link>Facades\System.Collections.Specialized.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Collections.dll">
+      <Link>Facades\System.Collections.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ComponentModel.Annotations.dll">
+      <Link>Facades\System.ComponentModel.Annotations.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ComponentModel.EventBasedAsync.dll">
+      <Link>Facades\System.ComponentModel.EventBasedAsync.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ComponentModel.Primitives.dll">
+      <Link>Facades\System.ComponentModel.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ComponentModel.TypeConverter.dll">
+      <Link>Facades\System.ComponentModel.TypeConverter.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ComponentModel.dll">
+      <Link>Facades\System.ComponentModel.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Console.dll">
+      <Link>Facades\System.Console.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Data.Common.dll">
+      <Link>Facades\System.Data.Common.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Data.SqlClient.dll">
+      <Link>Facades\System.Data.SqlClient.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.Contracts.dll">
+      <Link>Facades\System.Diagnostics.Contracts.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.Debug.dll">
+      <Link>Facades\System.Diagnostics.Debug.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.FileVersionInfo.dll">
+      <Link>Facades\System.Diagnostics.FileVersionInfo.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.Process.dll">
+      <Link>Facades\System.Diagnostics.Process.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.StackTrace.dll">
+      <Link>Facades\System.Diagnostics.StackTrace.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.TextWriterTraceListener.dll">
+      <Link>Facades\System.Diagnostics.TextWriterTraceListener.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.Tools.dll">
+      <Link>Facades\System.Diagnostics.Tools.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.TraceEvent.dll">
+      <Link>Facades\System.Diagnostics.TraceEvent.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.TraceSource.dll">
+      <Link>Facades\System.Diagnostics.TraceSource.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Diagnostics.Tracing.dll">
+      <Link>Facades\System.Diagnostics.Tracing.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Dynamic.Runtime.dll">
+      <Link>Facades\System.Dynamic.Runtime.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Globalization.Calendars.dll">
+      <Link>Facades\System.Globalization.Calendars.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Globalization.Extensions.dll">
+      <Link>Facades\System.Globalization.Extensions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Globalization.dll">
+      <Link>Facades\System.Globalization.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.Compression.ZipFile.dll">
+      <Link>Facades\System.IO.Compression.ZipFile.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.Compression.dll">
+      <Link>Facades\System.IO.Compression.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.FileSystem.AccessControl.dll">
+      <Link>Facades\System.IO.FileSystem.AccessControl.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.FileSystem.DriveInfo.dll">
+      <Link>Facades\System.IO.FileSystem.DriveInfo.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.FileSystem.Primitives.dll">
+      <Link>Facades\System.IO.FileSystem.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.FileSystem.Watcher.dll">
+      <Link>Facades\System.IO.FileSystem.Watcher.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.FileSystem.dll">
+      <Link>Facades\System.IO.FileSystem.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.IsolatedStorage.dll">
+      <Link>Facades\System.IO.IsolatedStorage.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.MemoryMappedFiles.dll">
+      <Link>Facades\System.IO.MemoryMappedFiles.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.Pipes.dll">
+      <Link>Facades\System.IO.Pipes.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.UnmanagedMemoryStream.dll">
+      <Link>Facades\System.IO.UnmanagedMemoryStream.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.IO.dll">
+      <Link>Facades\System.IO.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Linq.Expressions.dll">
+      <Link>Facades\System.Linq.Expressions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Linq.Parallel.dll">
+      <Link>Facades\System.Linq.Parallel.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Linq.Queryable.dll">
+      <Link>Facades\System.Linq.Queryable.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Linq.dll">
+      <Link>Facades\System.Linq.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.AuthenticationManager.dll">
+      <Link>Facades\System.Net.AuthenticationManager.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Cache.dll">
+      <Link>Facades\System.Net.Cache.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.HttpListener.dll">
+      <Link>Facades\System.Net.HttpListener.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Mail.dll">
+      <Link>Facades\System.Net.Mail.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.NameResolution.dll">
+      <Link>Facades\System.Net.NameResolution.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.NetworkInformation.dll">
+      <Link>Facades\System.Net.NetworkInformation.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Ping.dll">
+      <Link>Facades\System.Net.Ping.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Primitives.dll">
+      <Link>Facades\System.Net.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Requests.dll">
+      <Link>Facades\System.Net.Requests.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Security.dll">
+      <Link>Facades\System.Net.Security.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.ServicePoint.dll">
+      <Link>Facades\System.Net.ServicePoint.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Sockets.dll">
+      <Link>Facades\System.Net.Sockets.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.Utilities.dll">
+      <Link>Facades\System.Net.Utilities.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.WebHeaderCollection.dll">
+      <Link>Facades\System.Net.WebHeaderCollection.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.WebSockets.Client.dll">
+      <Link>Facades\System.Net.WebSockets.Client.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Net.WebSockets.dll">
+      <Link>Facades\System.Net.WebSockets.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ObjectModel.dll">
+      <Link>Facades\System.ObjectModel.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Private.CoreLib.InteropServices.dll">
+      <Link>Facades\System.Private.CoreLib.InteropServices.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Private.CoreLib.Threading.dll">
+      <Link>Facades\System.Private.CoreLib.Threading.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Reflection.Extensions.dll">
+      <Link>Facades\System.Reflection.Extensions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Reflection.Primitives.dll">
+      <Link>Facades\System.Reflection.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Reflection.TypeExtensions.dll">
+      <Link>Facades\System.Reflection.TypeExtensions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Reflection.dll">
+      <Link>Facades\System.Reflection.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Resources.ReaderWriter.dll">
+      <Link>Facades\System.Resources.ReaderWriter.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Resources.ResourceManager.dll">
+      <Link>Facades\System.Resources.ResourceManager.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.CompilerServices.VisualC.dll">
+      <Link>Facades\System.Runtime.CompilerServices.VisualC.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Extensions.dll">
+      <Link>Facades\System.Runtime.Extensions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Handles.dll">
+      <Link>Facades\System.Runtime.Handles.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.InteropServices.WindowsRuntime.dll">
+      <Link>Facades\System.Runtime.InteropServices.WindowsRuntime.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.InteropServices.dll">
+      <Link>Facades\System.Runtime.InteropServices.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Numerics.dll">
+      <Link>Facades\System.Runtime.Numerics.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Serialization.Formatters.dll">
+      <Link>Facades\System.Runtime.Serialization.Formatters.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Serialization.Json.dll">
+      <Link>Facades\System.Runtime.Serialization.Json.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Serialization.Primitives.dll">
+      <Link>Facades\System.Runtime.Serialization.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.Serialization.Xml.dll">
+      <Link>Facades\System.Runtime.Serialization.Xml.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Runtime.dll">
+      <Link>Facades\System.Runtime.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.AccessControl.dll">
+      <Link>Facades\System.Security.AccessControl.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Claims.dll">
+      <Link>Facades\System.Security.Claims.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Algorithms.dll">
+      <Link>Facades\System.Security.Cryptography.Algorithms.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Cng.dll">
+      <Link>Facades\System.Security.Cryptography.Cng.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Csp.dll">
+      <Link>Facades\System.Security.Cryptography.Csp.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.DeriveBytes.dll">
+      <Link>Facades\System.Security.Cryptography.DeriveBytes.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Encoding.dll">
+      <Link>Facades\System.Security.Cryptography.Encoding.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Encryption.Aes.dll">
+      <Link>Facades\System.Security.Cryptography.Encryption.Aes.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Encryption.ECDiffieHellman.dll">
+      <Link>Facades\System.Security.Cryptography.Encryption.ECDiffieHellman.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Encryption.ECDsa.dll">
+      <Link>Facades\System.Security.Cryptography.Encryption.ECDsa.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Encryption.dll">
+      <Link>Facades\System.Security.Cryptography.Encryption.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Hashing.Algorithms.dll">
+      <Link>Facades\System.Security.Cryptography.Hashing.Algorithms.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Hashing.dll">
+      <Link>Facades\System.Security.Cryptography.Hashing.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.OpenSsl.dll">
+      <Link>Facades\System.Security.Cryptography.OpenSsl.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Pkcs.dll">
+      <Link>Facades\System.Security.Cryptography.Pkcs.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.Primitives.dll">
+      <Link>Facades\System.Security.Cryptography.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.ProtectedData.dll">
+      <Link>Facades\System.Security.Cryptography.ProtectedData.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.RSA.dll">
+      <Link>Facades\System.Security.Cryptography.RSA.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.RandomNumberGenerator.dll">
+      <Link>Facades\System.Security.Cryptography.RandomNumberGenerator.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Cryptography.X509Certificates.dll">
+      <Link>Facades\System.Security.Cryptography.X509Certificates.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Principal.Windows.dll">
+      <Link>Facades\System.Security.Principal.Windows.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.Principal.dll">
+      <Link>Facades\System.Security.Principal.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Security.SecureString.dll">
+      <Link>Facades\System.Security.SecureString.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceModel.Duplex.dll">
+      <Link>Facades\System.ServiceModel.Duplex.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceModel.Http.dll">
+      <Link>Facades\System.ServiceModel.Http.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceModel.NetTcp.dll">
+      <Link>Facades\System.ServiceModel.NetTcp.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceModel.Primitives.dll">
+      <Link>Facades\System.ServiceModel.Primitives.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceModel.Security.dll">
+      <Link>Facades\System.ServiceModel.Security.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.ServiceProcess.ServiceController.dll">
+      <Link>Facades\System.ServiceProcess.ServiceController.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Text.Encoding.CodePages.dll">
+      <Link>Facades\System.Text.Encoding.CodePages.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Text.Encoding.Extensions.dll">
+      <Link>Facades\System.Text.Encoding.Extensions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Text.Encoding.dll">
+      <Link>Facades\System.Text.Encoding.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Text.RegularExpressions.dll">
+      <Link>Facades\System.Text.RegularExpressions.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.AccessControl.dll">
+      <Link>Facades\System.Threading.AccessControl.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.Overlapped.dll">
+      <Link>Facades\System.Threading.Overlapped.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.Tasks.Parallel.dll">
+      <Link>Facades\System.Threading.Tasks.Parallel.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.Tasks.dll">
+      <Link>Facades\System.Threading.Tasks.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.Thread.dll">
+      <Link>Facades\System.Threading.Thread.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.ThreadPool.dll">
+      <Link>Facades\System.Threading.ThreadPool.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.Timer.dll">
+      <Link>Facades\System.Threading.Timer.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Threading.dll">
+      <Link>Facades\System.Threading.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.ReaderWriter.dll">
+      <Link>Facades\System.Xml.ReaderWriter.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.XDocument.dll">
+      <Link>Facades\System.Xml.XDocument.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.XPath.XDocument.dll">
+      <Link>Facades\System.Xml.XPath.XDocument.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.XPath.dll">
+      <Link>Facades\System.Xml.XPath.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.XmlDocument.dll">
+      <Link>Facades\System.Xml.XmlDocument.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.XmlSerializer.dll">
+      <Link>Facades\System.Xml.XmlSerializer.dll</Link>
+    </BundleResource>
+    <BundleResource Include="..\..\..\..\..\..\Library\Frameworks\Xamarin.Mac.framework\Versions\2.8.2.19\lib\mono\Xamarin.Mac\Facades\System.Xml.Xsl.Primitives.dll">
+      <Link>Facades\System.Xml.Xsl.Primitives.dll</Link>
+    </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
