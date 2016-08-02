@@ -12,10 +12,15 @@ namespace Csg
 			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
 		}
 
-		public static Solid Sphere(double r = 1, bool center = false)
+		public static Solid Sphere(double r = 1, bool center = true)
 		{
 			var c = center ? new Vector3D(0, 0, 0) : new Vector3D(r, r, r);
 			return Solids.Sphere(new SphereOptions { Radius = r, Center = c });
+		}
+
+		public static Solid Sphere(double r, Vector3D center)
+		{
+			return Solids.Sphere(new SphereOptions { Radius = r, Center = center });
 		}
 
 		public static Solid Union(params Solid[] csgs)

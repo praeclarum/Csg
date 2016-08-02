@@ -22,7 +22,7 @@ namespace Csg.Test
 						Cube(size: 2.1, center: true)
 					)
 				).Translate(0, 0, 1.5).Scale(10);
-			AssertAcceptedStl(r, "OpenJsCadLogo");
+			AssertAcceptedStl(r, "Examples");
 		}
 	}
 }

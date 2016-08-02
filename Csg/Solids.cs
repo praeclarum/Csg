@@ -55,24 +55,6 @@ namespace Csg
 			return result;
 		}
 
-		public static Solid Cube(Vector3D radius, Vector3D center)
-		{
-			return Cube(new CubeOptions { Radius = radius, Center = center });
-		}
-
-		public static Solid Cube(double radius, Vector3D center)
-		{
-			var radius3 = new Vector3D(radius, radius, radius);
-			return Cube(new CubeOptions { Radius = radius3, Center = center });
-		}
-
-		public static Solid Cube(double radius)
-		{
-			var center = new Vector3D(0, 0, 0);
-			var radius3 = new Vector3D(radius, radius, radius);
-			return Cube(new CubeOptions { Radius = radius3, Center = center });
-		}
-
 		public static Solid Sphere(SphereOptions options)
 		{
 			var center = options.Center;
@@ -127,14 +109,6 @@ namespace Csg
 			}
 			var result = Solid.FromPolygons(polygons);
 			return result;
-		}
-		public static Solid Sphere(double radius, int resolution = Solid.DefaultResolution3D)
-		{
-			return Sphere(new SphereOptions { Radius = radius, Resolution = resolution });
-		}
-		public static Solid Sphere(double radius, Vector3D center, int resolution = Solid.DefaultResolution3D)
-		{
-			return Sphere(new SphereOptions { Radius = radius, Center = center, Resolution = resolution });
 		}
 	}
 
