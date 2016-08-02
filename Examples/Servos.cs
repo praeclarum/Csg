@@ -1,13 +1,7 @@
 using Csg;
 using static Csg.Solids;
 
-public class Component
-{
-    public static double Mm(double mm) => mm;
-    public static double Inch(double inch) => 25.4 * inch;
-}
-
-public class Servo : Component
+public class Servo
 {
     public double BodyWidth = 40.3;
     public double BodyHeight = 36.1;
@@ -28,15 +22,20 @@ public class Servo : Component
             Cube(TotalWidth, BracketHeight, BodyDepth, center: false).
             Translate(-TotalWidth/2, BodyDescent, -BodyDepth/2);
         Solid hole1 =
-            Sphere(HoleDiameter/2).
-            Translate(-TotalWidth/2 + HoleInset, BodyDescent + BracketHeight, -HoleSpacing/2); 
+            Cylinder(HoleDiameter/2, BracketHeight*4, center: true).
+            Translate(-TotalWidth/2 + HoleInset, BodyDescent, -HoleSpacing/2); 
         Solid hole2 =
-            Sphere(HoleDiameter/2).
-            Translate(-TotalWidth/2 + HoleInset, BodyDescent + BracketHeight, HoleSpacing/2); 
-        return Union(body, Difference(bracket, hole1, hole2)).Translate(y: -TotalHeight/2);
+            Cylinder(HoleDiameter/2, BracketHeight*4, center: true).
+            Translate(-TotalWidth/2 + HoleInset, BodyDescent, HoleSpacing/2); 
+        Solid hole3 =
+            Cylinder(HoleDiameter/2, BracketHeight*4, center: true).
+            Translate(TotalWidth/2 - HoleInset, BodyDescent, -HoleSpacing/2); 
+        Solid hole4 =
+            Cylinder(HoleDiameter/2, BracketHeight*4, center: true).
+            Translate(TotalWidth/2 - HoleInset, BodyDescent, HoleSpacing/2); 
+        return Union(body, Difference(bracket, hole1, hole2, hole3, hole4)).Translate(y: -TotalHeight/2);
     }
 }
-
 
 public static class Servos
 {
