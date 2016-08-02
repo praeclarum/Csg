@@ -116,7 +116,7 @@ namespace Csg
 			{
 				if (tag == 0)
 				{
-					tag = Csg.GetTag();
+					tag = Solid.GetTag();
 				}
 				return tag;
 			}
@@ -189,7 +189,7 @@ namespace Csg
 			{
 				if (tag == 0)
 				{
-					tag = Csg.GetTag();
+					tag = Solid.GetTag();
 				}
 				return tag;
 			}

@@ -67,7 +67,7 @@ namespace Csg.Viewer.Mac
 		{
 			return Task.Run(() =>
 			{
-				Csg csg;
+				Solid csg;
 				if (newBytes.Length > 0)
 				{
 					switch (Path.GetExtension(newPath).ToLowerInvariant())
@@ -80,7 +80,7 @@ namespace Csg.Viewer.Mac
 					}
 				}
 				else {
-					csg = new Csg();
+					csg = new Solid();
 				}
 				var newNode = csg.ToSCNNode();
 
@@ -109,12 +109,12 @@ namespace Csg.Viewer.Mac
 			references = refs.ToArray();
 		}
 
-		static Csg CreateCsgFromCSharp(byte[] bytes, string path)
+		static Solid CreateCsgFromCSharp(byte[] bytes, string path)
 		{
 			var text = new System.IO.StreamReader(new System.IO.MemoryStream(bytes)).ReadToEnd();
 			if (string.IsNullOrEmpty(text))
 			{
-				return new Csg();
+				return new Solid();
 			}
 
 			var tree = CSharpSyntaxTree.ParseText(text);
@@ -131,7 +131,7 @@ namespace Csg.Viewer.Mac
 					GetTypes().
 					SelectMany(t => t.GetMethods(BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)).
 					FirstOrDefault(m => m.GetParameters().Length == 0 &&
-					               m.ReturnType == typeof(Csg));
+					               m.ReturnType == typeof(Solid));
 				if (mainMethod == null)
 				{
 					throw new Exception("Could not find Main method.");
@@ -139,7 +139,7 @@ namespace Csg.Viewer.Mac
 				else {
 					var sw = new System.Diagnostics.Stopwatch();
 					sw.Start();
-					var csg = (Csg)mainMethod.Invoke(null, null);
+					var csg = (Solid)mainMethod.Invoke(null, null);
 					sw.Stop();
 					Console.WriteLine("CSG with {0} polygons in {1}", csg.Polygons.Count, sw.Elapsed);
 					return csg;

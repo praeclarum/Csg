@@ -7,14 +7,14 @@ namespace Csg
 	{
 		static readonly IFormatProvider icult = System.Globalization.CultureInfo.InvariantCulture;
 
-		public static string ToStlString(this Csg csg, string name)
+		public static string ToStlString(this Solid csg, string name)
 		{
 			var w = new StringWriter();
 			WriteStl(csg, name, w);
 			return w.ToString();
 		}
 
-		public static void WriteStl(this Csg csg, string name, TextWriter writer)
+		public static void WriteStl(this Solid csg, string name, TextWriter writer)
 		{
 			writer.Write("solid ");
 			writer.WriteLine(name);

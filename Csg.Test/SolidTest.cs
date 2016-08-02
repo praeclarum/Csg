@@ -7,7 +7,7 @@ namespace Csg.Test
 {
 	public class SolidTest
 	{
-		protected void AssertAcceptedStl(Csg csg, string fixtureName, [CallerMemberName] string testName = "")
+		protected void AssertAcceptedStl(Solid csg, string fixtureName, [CallerMemberName] string testName = "")
 		{
 			var aname = $"{fixtureName}.{testName}.stl";
 			var rname = $"{fixtureName}.{testName}_.stl";

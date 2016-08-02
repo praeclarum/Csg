@@ -34,11 +34,11 @@ namespace Csg
 				}
 			};
 
-		public static Csg Cube(CubeOptions options)
+		public static Solid Cube(CubeOptions options)
 		{
 			var c = options.Center;
 			var r = options.Radius.Abs; // negative radii make no sense
-			var result = Csg.FromPolygons(cubeData.Select(info =>
+			var result = Solid.FromPolygons(cubeData.Select(info =>
 			{
 				//var normal = new CSG.Vector3D(info[1]);
 				//var plane = new CSG.Plane(normal, 1);
@@ -55,25 +55,25 @@ namespace Csg
 			return result;
 		}
 
-		public static Csg Cube(Vector3D radius, Vector3D center)
+		public static Solid Cube(Vector3D radius, Vector3D center)
 		{
 			return Cube(new CubeOptions { Radius = radius, Center = center });
 		}
 
-		public static Csg Cube(double radius, Vector3D center)
+		public static Solid Cube(double radius, Vector3D center)
 		{
 			var radius3 = new Vector3D(radius, radius, radius);
 			return Cube(new CubeOptions { Radius = radius3, Center = center });
 		}
 
-		public static Csg Cube(double radius)
+		public static Solid Cube(double radius)
 		{
 			var center = new Vector3D(0, 0, 0);
 			var radius3 = new Vector3D(radius, radius, radius);
 			return Cube(new CubeOptions { Radius = radius3, Center = center });
 		}
 
-		public static Csg Sphere(SphereOptions options)
+		public static Solid Sphere(SphereOptions options)
 		{
 			var center = options.Center;
 			var radius = options.Radius;
@@ -125,14 +125,14 @@ namespace Csg
 				}
 				prevcylinderpoint = cylinderpoint;
 			}
-			var result = Csg.FromPolygons(polygons);
+			var result = Solid.FromPolygons(polygons);
 			return result;
 		}
-		public static Csg Sphere(double radius, int resolution = Csg.DefaultResolution3D)
+		public static Solid Sphere(double radius, int resolution = Solid.DefaultResolution3D)
 		{
 			return Sphere(new SphereOptions { Radius = radius, Resolution = resolution });
 		}
-		public static Csg Sphere(double radius, Vector3D center, int resolution = Csg.DefaultResolution3D)
+		public static Solid Sphere(double radius, Vector3D center, int resolution = Solid.DefaultResolution3D)
 		{
 			return Sphere(new SphereOptions { Radius = radius, Center = center, Resolution = resolution });
 		}
@@ -151,7 +151,7 @@ namespace Csg
 		public Vector3D ZAxis = new Vector3D(0, 0, 1);
 		public Vector3D Center;
 		public double Radius = 1;
-		public int Resolution = Csg.DefaultResolution3D;
+		public int Resolution = Solid.DefaultResolution3D;
 	}
 }
 

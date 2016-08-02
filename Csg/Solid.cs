@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Csg
 {
-	public class Csg
+	public class Solid
 	{
 		public List<Polygon> Polygons;
 		public Properties Properties;
@@ -15,7 +15,7 @@ namespace Csg
 		public const int DefaultResolution2D = 32;
 		public const int DefaultResolution3D = 12;
 
-		public Csg()
+		public Solid()
 		{
 			Polygons = new List<Polygon>();
 			Properties = new Properties();
@@ -23,18 +23,18 @@ namespace Csg
 			IsRetesselated = true;
 		}
 
-		public static Csg FromPolygons(List<Polygon> polygons)
+		public static Solid FromPolygons(List<Polygon> polygons)
 		{
-			var csg = new Csg();
+			var csg = new Solid();
 			csg.Polygons = polygons;
 			csg.IsCanonicalized = false;
 			csg.IsRetesselated = false;
 			return csg;
 		}
 
-		public Csg Union(params Csg[] others)
+		public Solid Union(params Solid[] others)
 		{
-			var csgs = new List<Csg>();
+			var csgs = new List<Solid>();
 			csgs.Add(this);
 			csgs.AddRange(others);
 			var i = 1;
@@ -46,7 +46,7 @@ namespace Csg
 			return csgs[i - 1].Retesselated().Canonicalized();
 		}
 
-		Csg UnionSub(Csg csg, bool retesselate, bool canonicalize)
+		Solid UnionSub(Solid csg, bool retesselate, bool canonicalize)
 		{
 			if (!MayOverlap(csg))
 			{
@@ -64,7 +64,7 @@ namespace Csg
 
 				var newpolygons = new List<Polygon>(a.AllPolygons());
 				newpolygons.AddRange(b.AllPolygons());
-				var result = Csg.FromPolygons(newpolygons);
+				var result = Solid.FromPolygons(newpolygons);
 				result.Properties = Properties.Merge(csg.Properties);
 				if (retesselate) result = result.Retesselated();
 				if (canonicalize) result = result.Canonicalized();
@@ -72,20 +72,20 @@ namespace Csg
 			}
 		}
 
-		Csg UnionForNonIntersecting(Csg csg)
+		Solid UnionForNonIntersecting(Solid csg)
 		{
 			var newpolygons = new List<Polygon>(Polygons);
 			newpolygons.AddRange(csg.Polygons);
-			var result = Csg.FromPolygons(newpolygons);
+			var result = Solid.FromPolygons(newpolygons);
 			result.Properties = Properties.Merge(csg.Properties);
 			result.IsCanonicalized = IsCanonicalized && csg.IsCanonicalized;
 			result.IsRetesselated = IsRetesselated && csg.IsRetesselated;
 			return result;
 		}
 
-		public Csg Substract(params Csg[] csgs)
+		public Solid Substract(params Solid[] csgs)
 		{
-			Csg result = this;
+			Solid result = this;
 			for (var i = 0; i < csgs.Length; i++)
 			{
 				var islast = (i == (csgs.Length - 1));
@@ -94,7 +94,7 @@ namespace Csg
 			return result;
 		}
 
-		Csg SubtractSub(Csg csg, bool retesselate, bool canonicalize)
+		Solid SubtractSub(Solid csg, bool retesselate, bool canonicalize)
 		{
 			var a = new Tree(Polygons);
 			var b = new Tree(csg.Polygons);
@@ -105,14 +105,14 @@ namespace Csg
 			a.AddPolygons(b.AllPolygons());
 			a.Invert();
 
-			var result = Csg.FromPolygons(a.AllPolygons());
+			var result = Solid.FromPolygons(a.AllPolygons());
 			result.Properties = Properties.Merge(csg.Properties);
 			if (retesselate) result = result.Retesselated();
 			if (canonicalize) result = result.Canonicalized();
 			return result;
 		}
 
-		public Csg Intersect(params Csg[] csgs)
+		public Solid Intersect(params Solid[] csgs)
 		{
 			var result = this;
 			for (var i = 0; i < csgs.Length; i++)
@@ -123,7 +123,7 @@ namespace Csg
 			return result;
 		}
 
-		Csg IntersectSub(Csg csg, bool retesselate, bool canonicalize)
+		Solid IntersectSub(Solid csg, bool retesselate, bool canonicalize)
 		{
 			var a = new Tree(Polygons);
 			var b = new Tree(csg.Polygons);
@@ -136,14 +136,14 @@ namespace Csg
 			a.AddPolygons(b.AllPolygons());
 			a.Invert();
 
-			var result = Csg.FromPolygons(a.AllPolygons());
+			var result = Solid.FromPolygons(a.AllPolygons());
 			result.Properties = Properties.Merge(csg.Properties);
 			if (retesselate) result = result.Retesselated();
 			if (canonicalize) result = result.Canonicalized();
 			return result;
 		}
 
-		public Csg Transform(Matrix4x4 matrix4x4)
+		public Solid Transform(Matrix4x4 matrix4x4)
 		{
 			var ismirror = matrix4x4.IsMirroring;
 			var transformedvertices = new Dictionary<int, Vertex>();
@@ -175,39 +175,39 @@ namespace Csg
 				if (ismirror) newvertices.Reverse();
 				newpolygons.Add(new Polygon(newvertices, p.Shared, newplane));
 			}
-			var result = Csg.FromPolygons(newpolygons);
+			var result = Solid.FromPolygons(newpolygons);
 			result.Properties = this.Properties.Transform(matrix4x4);
 			result.IsRetesselated = this.IsRetesselated;
 			result.IsCanonicalized = this.IsCanonicalized;
 			return result;
 		}
 
-		public Csg Translate(Vector3D offset)
+		public Solid Translate(Vector3D offset)
 		{
 			return Transform(Matrix4x4.Translation(offset));
 		}
 
-		public Csg Translate(double x, double y, double z)
+		public Solid Translate(double x, double y, double z)
 		{
 			return Transform(Matrix4x4.Translation(new Vector3D(x, y, z)));
 		}
 
-		public Csg Scale(Vector3D scale)
+		public Solid Scale(Vector3D scale)
 		{
 			return Transform(Matrix4x4.Scaling(scale));
 		}
 
-		public Csg Scale(double scale)
+		public Solid Scale(double scale)
 		{
 			return Transform(Matrix4x4.Scaling(new Vector3D(scale, scale, scale)));
 		}
 
-		public Csg Scale(double x, double y, double z)
+		public Solid Scale(double x, double y, double z)
 		{
 			return Transform(Matrix4x4.Scaling(new Vector3D(x, y, z)));
 		}
 
-		Csg Canonicalized()
+		Solid Canonicalized()
 		{
 			if (IsCanonicalized)
 			{
@@ -223,7 +223,7 @@ namespace Csg
 			}
 		}
 
-		Csg Retesselated()
+		Solid Retesselated()
 		{
 			if (IsRetesselated)
 			{
@@ -265,11 +265,11 @@ namespace Csg
 					}
 					else {
 						var retesselatedpolygons = new List<Polygon>();
-						Csg.RetesselateCoplanarPolygons(sourcepolygons, retesselatedpolygons);
+						Solid.RetesselateCoplanarPolygons(sourcepolygons, retesselatedpolygons);
 						destpolygons.AddRange(retesselatedpolygons);
 					}
 				}
-				var result = Csg.FromPolygons(destpolygons);
+				var result = Solid.FromPolygons(destpolygons);
 				result.IsRetesselated = true;
 				result.Properties = Properties;
 				return result;
@@ -308,7 +308,7 @@ namespace Csg
 			}
 		}
 
-		bool MayOverlap(Csg csg)
+		bool MayOverlap(Solid csg)
 		{
 			if ((this.Polygons.Count == 0) || (csg.Polygons.Count == 0))
 			{
@@ -865,7 +865,7 @@ namespace Csg
 			return new Polygon(newvertices_dedup, newshared, newplane);
 		}
 
-		public Csg GetCsg(Csg sourcecsg)
+		public Solid GetCsg(Solid sourcecsg)
 		{
 			var newpolygons = new List<Polygon>();
 			foreach (var polygon in sourcecsg.Polygons)
@@ -876,7 +876,7 @@ namespace Csg
 					newpolygons.Add(newpolygon);
 				}
 			}
-			return Csg.FromPolygons(newpolygons);
+			return Solid.FromPolygons(newpolygons);
 		}
 	}
 

@@ -9,7 +9,7 @@ namespace Csg.Viewer.Mac
 {
 	public static class SceneKitHelpers
 	{
-		public static SCNGeometry ToSCNGeometry(this Csg csg)
+		public static SCNGeometry ToSCNGeometry(this Solid csg)
 		{
 			if (csg.Polygons.Count == 0)
 			{
@@ -60,7 +60,7 @@ namespace Csg.Viewer.Mac
 			}
 		}
 
-		public static SCNNode ToSCNNode(this Csg csg)
+		public static SCNNode ToSCNNode(this Solid csg)
 		{
 			return SCNNode.FromGeometry(csg.ToSCNGeometry());
 		}

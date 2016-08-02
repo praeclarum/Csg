@@ -3,11 +3,11 @@ using static Csg.Script;
 
 public static class Servos
 {
-    public static Csg.Csg Servo()
+    public static Solid Servo()
     {
-        return Difference(Cube(200, center: true), Sphere(80, center:false));
+        return Difference(Sphere(200, center: true), Sphere(90, center:false));
     }
-    public static Csg.Csg Main()
+    public static Solid Main()
     {
         return Servo();
     }
