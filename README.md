@@ -1,6 +1,6 @@
 # CSG
 
-<img src="https://ci.appveyor.com/api/projects/status/github/praeclarum/Csg?branch=master&svg=true"/>
+<img height="44" src="https://www.bitrise.io/app/263f7a8c7ceac732.svg?token=djiqr1IrGoeXwD8N45VItQ&branch=master"/>
 
 Constructive Solid Geometry is a modeling library that provides
 3D solid primitives and operators to manipulate them.
