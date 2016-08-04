@@ -214,9 +214,9 @@ namespace Csg
 		{
 			return new Plane(Normal.Negated, -W);
 		}
-		public SplitPolygonResult SplitPolygon(Polygon polygon)
+		public unsafe void SplitPolygon(Polygon polygon, out SplitPolygonResult result)
 		{
-			var result = new SplitPolygonResult();
+			result = new SplitPolygonResult();
 			var planenormal = this.Normal;
 			var vertices = polygon.Vertices;
 			var numvertices = vertices.Count;
@@ -229,13 +229,13 @@ namespace Csg
 				var thisw = this.W;
 				var hasfront = false;
 				var hasback = false;
-				var vertexIsBack = new List<bool>();
+				var vertexIsBack = stackalloc bool[numvertices];
 				var MINEPS = -EPS;
 				for (var i = 0; i < numvertices; i++)
 				{
 					var t = planenormal.Dot(vertices[i].Pos) - thisw;
 					var isback = (t < 0);
-					vertexIsBack.Add(isback);
+					vertexIsBack[i] = isback;
 					if (t > EPS) hasfront = true;
 					if (t < MINEPS) hasback = true;
 				}
@@ -336,7 +336,6 @@ namespace Csg
 					}
 				}
 			}
-			return result;
 		}
 		Vector3D SplitLineBetweenPoints(Vector3D p1, Vector3D p2)
 		{
@@ -380,7 +379,7 @@ namespace Csg
 		}
 	}
 
-	public class SplitPolygonResult
+	public struct SplitPolygonResult
 	{
 		public int Type;
 		public Polygon Front;

@@ -56,6 +56,8 @@ namespace Csg.PerfTest
 
 		public static void Main(string[] args)
 		{
+			//var sphere1 = Sphere(new SphereOptions { Resolution = 1415, Radius = 1000, Center = new Vector3D(-500, 0, 0) });
+			//Console.WriteLine("{0}", sphere1.Polygons.Count);
 			PrimeJit();
 			Test();
 		}

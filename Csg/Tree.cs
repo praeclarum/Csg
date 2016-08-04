@@ -48,7 +48,7 @@ namespace Csg
 		public Plane Plane;
 		public Node Front;
 		public Node Back;
-		public readonly List<PolygonTreeNode> PolygonTreeNodes;
+		public List<PolygonTreeNode> PolygonTreeNodes;
 		public readonly Node Parent;
 
 		public Node(Node parent)
@@ -77,16 +77,15 @@ namespace Csg
 			var args = new Args { Node = this, PolygonTreeNodes = clippolygontreenodes };
 			var stack = new Stack<Args>();
 
-			while (args != null)
+			while (args.Node != null)
 			{
 				var node = args.Node;
 				var polygontreenodes = args.PolygonTreeNodes;
 
 				if (node.Plane != null)
 				{
-					var backnodes = new List<PolygonTreeNode>();
-					var frontnodes = new List<PolygonTreeNode>();
-					var coplanarfrontnodes = alsoRemoveCoplanarFront ? backnodes : frontnodes;
+					List<PolygonTreeNode> backnodes = null;
+					List<PolygonTreeNode> frontnodes = null;
 					var plane = node.Plane;
 					var numpolygontreenodes = polygontreenodes.Count;
 					for (var i = 0; i < numpolygontreenodes; i++)
@@ -94,15 +93,22 @@ namespace Csg
 						var node1 = polygontreenodes[i];
 						if (!node1.IsRemoved)
 						{
-							node1.SplitByPlane(plane, coplanarfrontnodes, backnodes, frontnodes, backnodes);
+							if (alsoRemoveCoplanarFront)
+							{
+								node1.SplitByPlane(plane, ref backnodes, ref backnodes, ref frontnodes, ref backnodes);
+							}
+							else
+							{
+								node1.SplitByPlane(plane, ref frontnodes, ref backnodes, ref frontnodes, ref backnodes);
+							}
 						}
 					}
 
-					if (node.Front != null && (frontnodes.Count > 0))
+					if (node.Front != null && (frontnodes != null))
 					{
 						stack.Push(new Args { Node = node.Front, PolygonTreeNodes = frontnodes});
 					}
-					var numbacknodes = backnodes.Count;
+					var numbacknodes = backnodes == null ? 0 : backnodes.Count;
 					if (node.Back != null && (numbacknodes > 0))
 					{
 						stack.Push(new Args { Node = node.Back, PolygonTreeNodes = backnodes});
@@ -115,8 +121,8 @@ namespace Csg
 						}
 					}
 				}
-				
-				args = (stack.Count > 0) ? args = stack.Pop() : null;
+				if (stack.Count > 0) args = stack.Pop();
+				else args.Node = null;
 			}
 		}
 
@@ -140,7 +146,7 @@ namespace Csg
 		{
 			var args = new Args { Node = this, PolygonTreeNodes = addpolygontreenodes };
 			var stack = new Stack<Args>();
-			while (args != null)
+			while (args.Node != null)
 			{
 				var node = args.Node;
 				var polygontreenodes = args.PolygonTreeNodes;
@@ -162,7 +168,7 @@ namespace Csg
 
 					for (int i = 0, n = polygontreenodes.Count; i < n; i++)
 					{
-						polygontreenodes[i].SplitByPlane(_this.Plane, _this.PolygonTreeNodes, backnodes, frontnodes, backnodes);
+						polygontreenodes[i].SplitByPlane(_this.Plane, ref _this.PolygonTreeNodes, ref backnodes, ref frontnodes, ref backnodes);
 					}
 
 					if (frontnodes.Count > 0)
@@ -177,10 +183,11 @@ namespace Csg
 					}
 				}
 
-				args = (stack.Count > 0) ? args = stack.Pop() : null;
+				if (stack.Count > 0) args = stack.Pop();
+				else args.Node = null;
 			}
 		}
-		class Args
+		struct Args
 		{
 			public Node Node;
 			public List<PolygonTreeNode> PolygonTreeNodes;
@@ -273,7 +280,7 @@ namespace Csg
 			}
 		}
 
-		public void SplitByPlane(Plane plane, List<PolygonTreeNode> coplanarfrontnodes, List<PolygonTreeNode> coplanarbacknodes, List<PolygonTreeNode> frontnodes, List<PolygonTreeNode> backnodes)
+		public void SplitByPlane(Plane plane, ref List<PolygonTreeNode> coplanarfrontnodes, ref List<PolygonTreeNode> coplanarbacknodes, ref List<PolygonTreeNode> frontnodes, ref List<PolygonTreeNode> backnodes)
 		{
 			if (children.Count > 0)
 			{
@@ -289,17 +296,17 @@ namespace Csg
 							queue.Add(node.children);
 						}
 						else {
-							node.SplitPolygonByPlane(plane, coplanarfrontnodes, coplanarbacknodes, frontnodes, backnodes);
+							node.SplitPolygonByPlane(plane, ref coplanarfrontnodes, ref coplanarbacknodes, ref frontnodes, ref backnodes);
 						}
 					}
 				}
 			}
 			else {
-				SplitPolygonByPlane(plane, coplanarfrontnodes, coplanarbacknodes, frontnodes, backnodes);
+				SplitPolygonByPlane(plane, ref coplanarfrontnodes, ref coplanarbacknodes, ref frontnodes, ref backnodes);
 			}
 		}
 
-		void SplitPolygonByPlane(Plane plane, List<PolygonTreeNode> coplanarfrontnodes, List<PolygonTreeNode> coplanarbacknodes, List<PolygonTreeNode> frontnodes, List<PolygonTreeNode> backnodes)
+		void SplitPolygonByPlane(Plane plane, ref List<PolygonTreeNode> coplanarfrontnodes, ref List<PolygonTreeNode> coplanarbacknodes, ref List<PolygonTreeNode> frontnodes, ref List<PolygonTreeNode> backnodes)
 		{
 			var polygon = this.polygon;
 			if (polygon != null)
@@ -311,37 +318,46 @@ namespace Csg
 				var d = planenormal.Dot(spherecenter) - plane.W;
 				if (d > sphereradius)
 				{
+					if (frontnodes == null) frontnodes = new List<PolygonTreeNode>();
 					frontnodes.Add(this);
 				}
 				else if (d < -sphereradius)
 				{
+					if (backnodes == null) backnodes = new List<PolygonTreeNode>();
 					backnodes.Add(this);
 				}
 				else {
-					var splitresult = plane.SplitPolygon(polygon);
+					SplitPolygonResult splitresult;
+					plane.SplitPolygon(polygon, out splitresult);
 					switch (splitresult.Type)
 					{
 						case 0:
+							if (coplanarfrontnodes == null) coplanarfrontnodes = new List<PolygonTreeNode>();
 							coplanarfrontnodes.Add(this);
 							break;
 						case 1:
+							if (coplanarbacknodes == null) coplanarbacknodes = new List<PolygonTreeNode>();
 							coplanarbacknodes.Add(this);
 							break;
 						case 2:
+							if (frontnodes == null) frontnodes = new List<PolygonTreeNode>();
 							frontnodes.Add(this);
 							break;
 						case 3:
+							if (backnodes == null) backnodes = new List<PolygonTreeNode>();
 							backnodes.Add(this);
 							break;
 						default:
 							if (splitresult.Front != null)
 							{
 								var frontnode = AddChild(splitresult.Front);
+								if (frontnodes == null) frontnodes = new List<PolygonTreeNode>();
 								frontnodes.Add(frontnode);
 							}
 							if (splitresult.Back != null)
 							{
 								var backnode = AddChild(splitresult.Back);
+								if (backnodes == null) backnodes = new List<PolygonTreeNode>();
 								backnodes.Add(backnode);
 							}
 							break;
