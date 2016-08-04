@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csg.Test", "Csg.Test\Csg.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csg.Viewer.Mac", "Csg.Viewer.Mac\Csg.Viewer.Mac.csproj", "{F803447C-03A3-4881-8D2F-4EBE1E243195}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Csg.PerfTest", "Csg.PerfTest\Csg.PerfTest.csproj", "{9449017F-3F4E-4255-8D74-603957BA744F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,5 +27,9 @@ Global
 		{F803447C-03A3-4881-8D2F-4EBE1E243195}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F803447C-03A3-4881-8D2F-4EBE1E243195}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F803447C-03A3-4881-8D2F-4EBE1E243195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9449017F-3F4E-4255-8D74-603957BA744F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9449017F-3F4E-4255-8D74-603957BA744F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9449017F-3F4E-4255-8D74-603957BA744F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9449017F-3F4E-4255-8D74-603957BA744F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
