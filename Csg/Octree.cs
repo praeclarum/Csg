@@ -15,14 +15,6 @@ namespace Csg
 		{
 			RootNode = new OctreeNode(bbox, 0, maxDepth);
 		}
-		public static Octree FromPolygons(List<Polygon> polygons, int maxDepth)
-		{
-			if (polygons.Count == 0) return new Octree(new BoundingBox(1, 1, 1), maxDepth);
-			var bbox = polygons[0].BoundingBox;
-			var o = new Octree(bbox, maxDepth);
-			o.RootNode.AddPolygons(polygons);
-			return o;
-		}
 		public List<OctreeNode> AllNodes
 		{
 			get
@@ -48,7 +40,7 @@ namespace Csg
 	{
 		public readonly BoundingBox BoundingBox;
 		public readonly OctreeNode[] Children;
-		public readonly List<Polygon> Polygons = new List<Polygon>();
+		public readonly List<PolygonTreeNode> Polygons = new List<PolygonTreeNode>();
 		static readonly Vector3D[] coffsets = new[] {
 			new Vector3D(0.25, 0.25, 0.25),
 			new Vector3D(-0.25, 0.25, 0.25),
@@ -76,7 +68,7 @@ namespace Csg
 				Children = null;
 			}
 		}
-		public void AddPolygon(Polygon polygon)
+		public void AddPolygon(PolygonTreeNode polygon)
 		{
 			this.Polygons.Add(polygon);
 			if (Children == null) return;
@@ -89,7 +81,7 @@ namespace Csg
 				}
 			}
 		}
-		public void AddPolygons(List<Polygon> polygons)
+		public void AddPolygons(List<PolygonTreeNode> polygons)
 		{
 			foreach (var p in polygons)
 			{

@@ -8,13 +8,15 @@ namespace Csg
 	{
 		PolygonTreeNode polygonTree;
 		Node rootnode;
+		Octree octree;
 
 		public Node RootNode => rootnode;
 
-		public Tree(IEnumerable<Polygon> polygons)
+		public Tree(BoundingBox bbox, List<Polygon> polygons)
 		{
 			polygonTree = new PolygonTreeNode();
 			rootnode = new Node(null);
+			octree = new Octree(bbox, 3);
 			if (polygons != null) AddPolygons(polygons);
 		}
 
@@ -36,10 +38,17 @@ namespace Csg
 			return result;
 		}
 
-		public void AddPolygons(IEnumerable<Polygon> polygons)
+		public void AddPolygons(List<Polygon> polygons)
 		{
-			var polygontreenodes = polygons.Select(p => polygonTree.AddChild(p));
-			rootnode.AddPolygonTreeNodes(polygontreenodes.ToList());
+			var n = polygons.Count;
+			var polygontreenodes = new List<PolygonTreeNode>(n);
+			for (var i = 0; i < n; i++)
+			{
+				var p = polygonTree.AddChild(polygons[i]);
+				polygontreenodes.Add(p);
+				octree.RootNode.AddPolygon(p);
+			}
+			rootnode.AddPolygonTreeNodes(polygontreenodes);
 		}
 	}
 
@@ -208,6 +217,8 @@ namespace Csg
 			polygon = null;
 			removed = false;
 		}
+
+		public BoundingBox BoundingBox => polygon?.BoundingBox;
 
 		public void AddPolygons(List<Polygon> polygons)
 		{

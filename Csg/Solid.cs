@@ -53,8 +53,8 @@ namespace Csg
 				return UnionForNonIntersecting(csg);
 			}
 			else {
-				var a = new Tree(Polygons);
-				var b = new Tree(csg.Polygons);
+				var a = new Tree(Bounds, Polygons);
+				var b = new Tree(csg.Bounds, csg.Polygons);
 
 				a.ClipTo(b, false);
 				b.ClipTo(a);
@@ -96,8 +96,8 @@ namespace Csg
 
 		Solid SubtractSub(Solid csg, bool retesselate, bool canonicalize)
 		{
-			var a = new Tree(Polygons);
-			var b = new Tree(csg.Polygons);
+			var a = new Tree(Bounds, Polygons);
+			var b = new Tree(csg.Bounds, csg.Polygons);
 
 			a.Invert();
 			a.ClipTo(b);
@@ -125,8 +125,8 @@ namespace Csg
 
 		Solid IntersectSub(Solid csg, bool retesselate, bool canonicalize)
 		{
-			var a = new Tree(Polygons);
-			var b = new Tree(csg.Polygons);
+			var a = new Tree(Bounds, Polygons);
+			var b = new Tree(csg.Bounds, csg.Polygons);
 
 			a.Invert();
 			b.ClipTo(a);

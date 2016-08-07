@@ -204,8 +204,8 @@ namespace Csg
 
 	public class BoundingBox
 	{
-		public Vector3D Min;
-		public Vector3D Max;
+		public readonly Vector3D Min;
+		public readonly Vector3D Max;
 		public BoundingBox(Vector3D min, Vector3D max)
 		{
 			Min = min;
