@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PerfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Csg\Csg.csproj">
