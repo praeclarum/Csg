@@ -84,7 +84,7 @@ namespace Csg
 		public void ClipPolygons(List<PolygonTreeNode> clippolygontreenodes, bool alsoRemoveCoplanarFront)
 		{
 			var args = new Args { Node = this, PolygonTreeNodes = clippolygontreenodes };
-			var stack = new Stack<Args>();
+			Stack<Args> stack = null;
 
 			while (args.Node != null)
 			{
@@ -115,12 +115,14 @@ namespace Csg
 
 					if (node.Front != null && (frontnodes != null))
 					{
-						stack.Push(new Args { Node = node.Front, PolygonTreeNodes = frontnodes});
+						if (stack == null) stack = new Stack<Args>();
+						stack.Push(new Args { Node = node.Front, PolygonTreeNodes = frontnodes });
 					}
 					var numbacknodes = backnodes == null ? 0 : backnodes.Count;
 					if (node.Back != null && (numbacknodes > 0))
 					{
-						stack.Push(new Args { Node = node.Back, PolygonTreeNodes = backnodes});
+						if (stack == null) stack = new Stack<Args>();
+						stack.Push(new Args { Node = node.Back, PolygonTreeNodes = backnodes });
 					}
 					else {
 						// there's nothing behind this plane. Delete the nodes behind this plane:
@@ -130,7 +132,7 @@ namespace Csg
 						}
 					}
 				}
-				if (stack.Count > 0) args = stack.Pop();
+				if (stack != null && stack.Count > 0) args = stack.Pop();
 				else args.Node = null;
 			}
 		}
@@ -138,16 +140,24 @@ namespace Csg
 		public void ClipTo(Tree tree, bool alsoRemoveCoplanarFront)
 		{
 			var node = this;
-			var stack = new Stack<Node>();
+			Stack<Node> stack = null;
 			while (node != null)
 			{
 				if (node.PolygonTreeNodes.Count > 0)
 				{
 					tree.RootNode.ClipPolygons(node.PolygonTreeNodes, alsoRemoveCoplanarFront);
 				}
-				if (node.Front != null) stack.Push(node.Front);
-				if (node.Back != null) stack.Push(node.Back);
-				node = (stack.Count > 0) ? stack.Pop() : null;
+				if (node.Front != null)
+				{
+					if (stack == null) stack = new Stack<Node>();
+					stack.Push(node.Front);
+				}
+				if (node.Back != null)
+				{
+					if (stack == null) stack = new Stack<Node>();
+					stack.Push(node.Back);
+				}
+				node = (stack != null && stack.Count > 0) ? stack.Pop() : null;
 			}
 		}
 
