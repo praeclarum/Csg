@@ -302,7 +302,7 @@ namespace Csg
 							maxpoint = maxpoint.Max(bounds.Max);
 						}
 					}
-					cachedBoundingBox = new BoundingBox { Min = minpoint, Max = maxpoint };
+					cachedBoundingBox = new BoundingBox(minpoint, maxpoint);
 				}
 				return cachedBoundingBox;
 			}

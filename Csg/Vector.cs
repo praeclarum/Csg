@@ -89,6 +89,10 @@ namespace Csg
 		{
 			return new Vector3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 		}
+		public static Vector3D operator *(Vector3D a, Vector3D b)
+		{
+			return new Vector3D(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+		}
 		public static Vector3D operator *(Vector3D a, double b)
 		{
 			return new Vector3D(a.X * b, a.Y * b, a.Z * b);
@@ -179,6 +183,10 @@ namespace Csg
 		{
 			return new Vector2D(a.X - b.X, a.Y - b.Y);
 		}
+		public static Vector2D operator *(Vector2D a, Vector2D b)
+		{
+			return new Vector2D(a.X * b.X, a.Y * b.Y);
+		}
 		public static Vector2D operator *(Vector2D a, double b)
 		{
 			return new Vector2D(a.X * b, a.Y * b);
@@ -192,6 +200,49 @@ namespace Csg
 		{
 			return $"[{X}, {Y}]";
 		}
+	}
+
+	public class BoundingBox
+	{
+		public Vector3D Min;
+		public Vector3D Max;
+		public BoundingBox(Vector3D min, Vector3D max)
+		{
+			Min = min;
+			Max = max;
+		}
+		public BoundingBox At(Vector3D position, Vector3D size)
+		{
+			return new BoundingBox(position, position + size);
+		}
+		public BoundingBox(double dx, double dy, double dz)
+		{
+			Min = new Vector3D(-dx / 2, -dy / 2, -dz / 2);
+			Max = new Vector3D(dx / 2, dy / 2, dz / 2);
+		}
+		public Vector3D Size => Max - Min;
+		public Vector3D Center => (Min + Max) / 2;
+		public static BoundingBox operator +(BoundingBox a, Vector3D b)
+		{
+			return new BoundingBox(a.Min + b, a.Max + b);
+		}
+		public bool Intersects(BoundingBox b)
+		{
+			if (Max.X < b.Min.X) return false;
+			if (Max.Y < b.Min.Y) return false;
+			if (Max.Z < b.Min.Z) return false;
+			if (Min.X > b.Max.X) return false;
+			if (Min.Y > b.Max.Y) return false;
+			if (Min.Z > b.Max.Z) return false;
+			return true;
+		}
+		public override string ToString() => $"{Center}, s={Size}";
+	}
+
+	public class BoundingSphere
+	{
+		public Vector3D Center;
+		public double Radius;
 	}
 
 	public class OrthoNormalBasis

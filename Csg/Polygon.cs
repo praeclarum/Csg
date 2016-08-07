@@ -71,7 +71,7 @@ namespace Csg
 						minpoint = minpoint.Min(point);
 						maxpoint = maxpoint.Max(point);
 					}
-					cachedBoundingBox = new BoundingBox { Min = minpoint, Max = maxpoint };
+					cachedBoundingBox = new BoundingBox(minpoint, maxpoint);
 				}
 				return cachedBoundingBox;
 			}
@@ -166,19 +166,6 @@ namespace Csg
 			}
 			return result;
 		}
-	}
-
-	public class BoundingBox
-	{
-		public Vector3D Min;
-		public Vector3D Max;
-		public override string ToString() => $"{Min} - {Max}";
-	}
-
-	public class BoundingSphere
-	{
-		public Vector3D Center;
-		public double Radius;
 	}
 
 	public class Plane : IEquatable<Plane>
