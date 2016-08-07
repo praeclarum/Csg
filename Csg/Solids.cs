@@ -34,10 +34,24 @@ namespace Csg
 			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
 		}
 
+		public static Solid Cube(double size, Vector3D center)
+		{
+			var r = new Vector3D(size / 2, size / 2, size / 2);
+			var c = center;
+			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+		}
+
 		public static Solid Cube(Vector3D size, bool center = false)
 		{
 			var r = size / 2;
 			var c = center ? new Vector3D(0, 0, 0) : r;
+			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+		}
+
+		public static Solid Cube(Vector3D size, Vector3D center)
+		{
+			var r = size / 2;
+			var c = center;
 			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
 		}
 

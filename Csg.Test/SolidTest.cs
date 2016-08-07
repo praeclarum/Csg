@@ -29,7 +29,7 @@ namespace Csg.Test
 			if (!File.Exists(acceptedPath))
 			{
 				File.WriteAllText(rejectedPath, testStl);
-				Assert.Fail("No results have been marked as accepted.");
+				Assert.Inconclusive("No results have been marked as accepted.");
 			}
 			else {
 				var acceptedStl = File.ReadAllText(acceptedPath);
