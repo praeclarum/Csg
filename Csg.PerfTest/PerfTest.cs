@@ -46,11 +46,11 @@ namespace Csg
 		static void Test()
 		{
 			var tests = new[] {
-				//10,
-				//50,
-				//100,
-				110,
-				//150,
+				10,
+				50,
+				100,
+				//110,
+				150,
 			};
 			var res = tests.Select(TestRes).ToArray();
 			Console.WriteLine("Res,Time,Polygons,Compares");
