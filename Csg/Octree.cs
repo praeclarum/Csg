@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Csg
 {
-	class Octree
+	public class Octree
 	{
 		public readonly OctreeNode RootNode;
 		public static Octree Unit()
@@ -36,7 +36,7 @@ namespace Csg
 		}
 	}
 
-	class OctreeNode
+	public class OctreeNode
 	{
 		public readonly BoundingBox BoundingBox;
 		public readonly OctreeNode[] Children;
@@ -54,7 +54,7 @@ namespace Csg
 		public OctreeNode(BoundingBox bbox, int depth, int maxDepth)
 		{
 			BoundingBox = bbox;
-			if (depth <= maxDepth)
+			if (depth + 1 <= maxDepth)
 			{
 				Children = new OctreeNode[8];
 				var cbbox = new BoundingBox(bbox.Size.X / 2, bbox.Size.X / 2, bbox.Size.X / 2) +

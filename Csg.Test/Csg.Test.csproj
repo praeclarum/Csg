@@ -41,6 +41,7 @@
     <Compile Include="ExamplesTest.cs" />
     <Compile Include="CubeTest.cs" />
     <Compile Include="CylinderTest.cs" />
+    <Compile Include="OctreeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

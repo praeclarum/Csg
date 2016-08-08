@@ -8,7 +8,6 @@ namespace Csg
 	{
 		PolygonTreeNode polygonTree;
 		Node rootnode;
-		Octree octree;
 
 		public Node RootNode => rootnode;
 
@@ -16,7 +15,6 @@ namespace Csg
 		{
 			polygonTree = new PolygonTreeNode();
 			rootnode = new Node(null);
-			octree = new Octree(bbox, 3);
 			if (polygons != null) AddPolygons(polygons);
 		}
 
@@ -46,7 +44,6 @@ namespace Csg
 			{
 				var p = polygonTree.AddChild(polygons[i]);
 				polygontreenodes.Add(p);
-				octree.RootNode.AddPolygon(p);
 			}
 			rootnode.AddPolygonTreeNodes(polygontreenodes);
 		}
