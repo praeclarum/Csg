@@ -65,13 +65,14 @@ namespace Csg
 
 		public void Invert()
 		{
-			var queue = new List<Node> { this };
-			for (var i = 0; i < queue.Count; i++)
+			var queue = new Queue<Node>();
+			queue.Enqueue(this);
+			while (queue.Count > 0)
 			{
-				var node = queue[i];
+				var node = queue.Dequeue();
 				if (node.Plane != null) node.Plane = node.Plane.Flipped();
-				if (node.Front != null) queue.Add(node.Front);
-				if (node.Back != null) queue.Add(node.Back);
+				if (node.Front != null) queue.Enqueue(node.Front);
+				if (node.Back != null) queue.Enqueue(node.Back);
 				var temp = node.Front;
 				node.Front = node.Back;
 				node.Back = temp;
@@ -279,12 +280,13 @@ namespace Csg
 
 		public void GetPolygons(List<Polygon> result)
 		{
-			var queue = new List<List<PolygonTreeNode>> {
-			new List<PolygonTreeNode> { this } };
-			for (var i = 0; i < queue.Count; i++)
+			var queue = new Queue<List<PolygonTreeNode>>();
+			queue.Enqueue(new List<PolygonTreeNode> { this });
+			while (queue.Count > 0)
 			{
-				var children = queue[i];
-				for (int j = 0, l = children.Count; j < l; j++)
+				var children = queue.Dequeue();
+				var l = children.Count;
+				for (int j = 0; j < l; j++)
 				{
 					var node = children[j];
 					if (node.polygon != null)
@@ -292,7 +294,7 @@ namespace Csg
 						result.Add(node.polygon);
 					}
 					else {
-						queue.Add(node.children);
+						queue.Enqueue(node.children);
 					}
 				}
 			}
@@ -302,16 +304,18 @@ namespace Csg
 		{
 			if (children.Count > 0)
 			{
-				var queue = new List<List<PolygonTreeNode>> { children };
-				for (var i = 0; i < queue.Count; i++)
+				var queue = new Queue<List<PolygonTreeNode>>();
+				queue.Enqueue(children);
+				while (queue.Count > 0)
 				{
-					var nodes = queue[i];
-					for (int j = 0, l = nodes.Count; j < l; j++)
+					var nodes = queue.Dequeue();
+					var l = nodes.Count;
+					for (int j = 0; j < l; j++)
 					{
 						var node = nodes[j];
 						if (node.children.Count > 0)
 						{
-							queue.Add(node.children);
+							queue.Enqueue(node.children);
 						}
 						else {
 							node.SplitPolygonByPlane(plane, ref coplanarfrontnodes, ref coplanarbacknodes, ref frontnodes, ref backnodes);
