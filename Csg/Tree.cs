@@ -443,7 +443,10 @@ namespace Csg
 		}
 		public PolygonTreeNodeList(int capacity)
 		{
-			store = new List<PolygonTreeNode>(capacity);
+			if (capacity > 1)
+			{
+				store = new List<PolygonTreeNode>(capacity);
+			}
 		}
 
 		public int Count
@@ -453,7 +456,7 @@ namespace Csg
 				if (store != null) return store.Count;
 				return singleton != null ? 1 : 0;
 			}
-}
+		}
 		public PolygonTreeNode this[int index]
 		{
 			get
