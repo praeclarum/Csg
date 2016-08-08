@@ -399,12 +399,11 @@ namespace Csg
 
 		void InvertSub()
 		{
-			var queue = new List<List<PolygonTreeNode>> {
-				new List<PolygonTreeNode> { this }
-			};
-			for (var i = 0; i < queue.Count; i++)
+			var queue = new Queue<List<PolygonTreeNode>>();
+			queue.Enqueue(new List<PolygonTreeNode>(1) { this });
+			while (queue.Count > 0)
 			{
-				var children = queue[i];
+				var children = queue.Dequeue();
 				var l = children.Count;
 				for (int j = 0; j < l; j++)
 				{
@@ -413,7 +412,7 @@ namespace Csg
 					{
 						node.polygon = node.polygon.Flipped();
 					}
-					queue.Add(node.children);
+					queue.Enqueue(node.children);
 				}
 			}
 		}
