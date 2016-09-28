@@ -10,6 +10,8 @@ namespace Csg
 		{
 			var c = options.Center;
 			var r = options.Radius.Abs; // negative radii make no sense
+			if (r.X == 0.0 || r.Y == 0.0 || r.Z == 0.0)
+				return new Solid();
 			var result = Solid.FromPolygons(cubeData.Select(info =>
 			{
 				//var normal = new Vector3D(info[1]);
@@ -66,6 +68,8 @@ namespace Csg
 		{
 			var center = options.Center;
 			var radius = Math.Abs(options.Radius);
+			if (radius == 0.0)
+				return new Solid();
 			var resolution = options.Resolution;
 			var xvector = options.XAxis * radius;
 			var yvector = options.YAxis * radius;
