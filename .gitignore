@@ -1,5 +1,6 @@
 #Rejected tests
 Csg.Test/Results/*_.stl
+/.vs
 
 #Autosave files
 *~
