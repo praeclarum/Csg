@@ -3,9 +3,12 @@ using System.Linq;
 using System.Diagnostics;
 
 using static Csg.Solids;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
 
 namespace Csg.PerfTest
 {
+	[MemoryDiagnoser]
 	public class PerfTest
 	{
 		static void PrimeJit()
@@ -25,15 +28,16 @@ namespace Csg.PerfTest
 			public long Compares => (long)Polygons * (long)Polygons;
 		}
 
+		static readonly Stopwatch sw = new Stopwatch ();
+
 		static TestResult TestRes(int res)
 		{
-			var sw = new Stopwatch();
+			var st = sw.Elapsed;
 			var sphere1 = Sphere(new SphereOptions { Resolution = res, Radius = 1000, Center = new Vector3D(-500, 0, 0) });
 			var sphere2 = Sphere(new SphereOptions { Resolution = res, Radius = 1000, Center = new Vector3D(500, 0, 0) });
-			sw.Start();
 			var sub = Difference(sphere1, sphere2);
-			sw.Stop();
-			var subTime = sw.Elapsed;
+			var et = sw.Elapsed;
+			var subTime = et - st;
 			return new TestResult
 			{
 				Resolution = res,
@@ -43,29 +47,44 @@ namespace Csg.PerfTest
 			};
 		}
 
-		static void Test()
+		static TestResult Test (int res)
 		{
-			var tests = new[] {
-				10,
-				50,
-				100,
-				//110,
-				//150,
-			};
-			var res = tests.Select(TestRes).ToArray();
-			Console.WriteLine("Res,Time,Polygons,Compares");
-			foreach (var r in res)
-			{
-				Console.WriteLine("{0},{1},{2},{3}", r.Resolution, r.Time.TotalSeconds, r.Polygons, r.Compares);
-			}
+			TestRes (res);
+			var r0 = TestRes (res);
+			var r1 = TestRes (res);
+			var r2 = TestRes (res);
+			r2.Time = TimeSpan.FromMilliseconds ((r0.Time.TotalMilliseconds + r1.Time.TotalMilliseconds + r2.Time.TotalMilliseconds) / 3);
+			return r2;
 		}
+
+		[Benchmark(Baseline = true)]
+		public void Resolution10 () => TestRes (10);
+
+		[Benchmark]
+		public void Resolution50 () => TestRes (50);
 
 		public static void Run()
 		{
-			//var sphere1 = Sphere(new SphereOptions { Resolution = 1415, Radius = 1000, Center = new Vector3D(-500, 0, 0) });
-			//Console.WriteLine("{0}", sphere1.Polygons.Count);
-			PrimeJit();
-			Test();
+			sw.Start ();
+
+#if __MOBILE__
+			PrimeJit ();
+			var tests = new[] {
+				10,
+				50,
+				//100,
+				//110,
+				//150,
+			};
+			var res = tests.Select(Test).ToArray();
+			Console.WriteLine("Res,Time (ms),Polygons,Compares");
+			foreach (var r in res)
+			{
+				Console.WriteLine("{0},{1:##0.000},{2},{3}", r.Resolution, r.Time.TotalMilliseconds, r.Polygons, r.Compares);
+			}
+#else
+			BenchmarkRunner.Run<PerfTest> ();
+#endif
 		}
 	}
 }

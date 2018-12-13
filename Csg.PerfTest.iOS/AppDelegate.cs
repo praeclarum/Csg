@@ -1,5 +1,22 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using UIKit;
+
+namespace BenchmarkDotNet.Attributes
+{
+	public class BenchmarkAttribute : Attribute
+	{
+		public bool Baseline = false;
+	}
+
+	public class MemoryDiagnoserAttribute : Attribute
+	{
+	}
+}
+
+namespace BenchmarkDotNet.Running
+{
+}
 
 namespace Csg.PerfTest.iOS
 {
