@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 using static Csg.Solids;
 
-namespace Csg
+namespace Csg.PerfTest
 {
 	public class PerfTest
 	{
@@ -50,7 +50,7 @@ namespace Csg
 				50,
 				100,
 				//110,
-				150,
+				//150,
 			};
 			var res = tests.Select(TestRes).ToArray();
 			Console.WriteLine("Res,Time,Polygons,Compares");

@@ -1,4 +1,4 @@
-﻿namespace Csg
+﻿namespace Csg.PerfTest
 {
 	public class Program
 	{
