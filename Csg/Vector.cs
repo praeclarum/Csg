@@ -303,7 +303,9 @@ namespace Csg
 		}
 
 		public Matrix4x4()
-			: this(new double[16])
+			: this(new double[] {
+				1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
+			})
 		{
 		}
 
