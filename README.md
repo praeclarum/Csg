@@ -1,6 +1,6 @@
 # CSG
 
-<img height="44" src="https://www.bitrise.io/app/263f7a8c7ceac732.svg?token=djiqr1IrGoeXwD8N45VItQ&branch=master"/>
+[![Build Status](https://app.bitrise.io/app/ac8a3403f1b8977a/status.svg?token=cZ72_Fb1fv1qFyBXXDQxhg)](https://app.bitrise.io/app/ac8a3403f1b8977a)
 
 Constructive Solid Geometry is a modeling library that provides
 3D solid primitives and operators to manipulate them.
