@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
+[assembly:InternalsVisibleToAttribute ("Csg.Test")]
 
 namespace Csg
 {
-	class Octree
+	internal class Octree
 	{
 		public readonly OctreeNode RootNode;
 		public static Octree Unit()
@@ -36,7 +39,7 @@ namespace Csg
 		}
 	}
 
-	class OctreeNode
+	internal class OctreeNode
 	{
 		public readonly BoundingBox BoundingBox;
 		public readonly OctreeNode[] Children;
