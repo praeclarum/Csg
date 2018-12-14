@@ -338,7 +338,7 @@ namespace Csg
 				var plane = sourcepolygons[0].Plane;
 				var shared = sourcepolygons[0].Shared;
 				var orthobasis = new OrthoNormalBasis(plane);
-				var polygonvertices2d = new List<List<Vector2D>>(); // array of array of CSG.Vector2D
+				var polygonvertices2d = new List<List<Vertex2D>>(); // array of array of CSG.Vector2D
 				var polygontopvertexindexes = new List<int>(); // array of indexes of topmost vertex per polygon
 				var topy2polygonindexes = new Dictionary<double, List<int>>();
 				var ycoordinatetopolygonindexes = new Dictionary<double, HashSet<int>>();
@@ -353,7 +353,7 @@ namespace Csg
 				for (var polygonindex = 0; polygonindex < numpolygons; polygonindex++)
 				{
 					var poly3d = sourcepolygons[polygonindex];
-					var vertices2d = new List<Vector2D>();
+					var vertices2d = new List<Vertex2D> ();
 					var numvertices = poly3d.Vertices.Count;
 					var minindex = -1;
 					if (numvertices > 0)
@@ -384,7 +384,7 @@ namespace Csg
 								ycoordinatebins[ycoordinatebin] = pos2d.Y;
 							}
 							pos2d = new Vector2D(pos2d.X, newy);
-							vertices2d.Add(pos2d);
+							vertices2d.Add(new Vertex2D (pos2d, poly3d.Vertices[i].Tex));
 							var y = pos2d.Y;
 							if ((i == 0) || (y < miny))
 							{
@@ -405,7 +405,7 @@ namespace Csg
 						if (miny >= maxy)
 						{
 							// degenerate polygon, all vertices have same y coordinate. Just ignore it from now:
-							vertices2d = new List<Vector2D>();
+							vertices2d = new List<Vertex2D> ();
 							numvertices = 0;
 							minindex = -1;
 						}
@@ -468,12 +468,12 @@ namespace Csg
 							{
 								var nextleftvertexindex = newleftvertexindex + 1;
 								if (nextleftvertexindex >= numvertices) nextleftvertexindex = 0;
-								if (vertices2d[nextleftvertexindex].Y != ycoordinate) break;
+								if (vertices2d[nextleftvertexindex].Pos.Y != ycoordinate) break;
 								newleftvertexindex = nextleftvertexindex;
 							}
 							var nextrightvertexindex = newrightvertexindex - 1;
 							if (nextrightvertexindex < 0) nextrightvertexindex = numvertices - 1;
-							if (vertices2d[nextrightvertexindex].Y == ycoordinate)
+							if (vertices2d[nextrightvertexindex].Pos.Y == ycoordinate)
 							{
 								newrightvertexindex = nextrightvertexindex;
 							}
@@ -525,7 +525,7 @@ namespace Csg
 								{
 									var i = topleftvertexindex + 1;
 									if (i >= numvertices) i = 0;
-									if (vertices2d[i].Y != ycoordinate) break;
+									if (vertices2d[i].Pos.Y != ycoordinate) break;
 									if (i == topvertexindex) break; // should not happen, but just to prevent endless loops
 									topleftvertexindex = i;
 								}
@@ -534,7 +534,7 @@ namespace Csg
 								{
 									var i = toprightvertexindex - 1;
 									if (i < 0) i = numvertices - 1;
-									if (vertices2d[i].Y != ycoordinate) break;
+									if (vertices2d[i].Pos.Y != ycoordinate) break;
 									if (i == topleftvertexindex) break; // should not happen, but just to prevent endless loops
 									toprightvertexindex = i;
 								}
@@ -559,8 +559,8 @@ namespace Csg
 										el1.topleft, el1.bottomleft, middleycoordinate);
 									var x2 = InterpolateBetween2DPointsForY(
 										el2.topleft, el2.bottomleft, middleycoordinate);
-									if (x1 > x2) return 1;
-									if (x1 < x2) return -1;
+									if (x1.Result > x2.Result) return 1;
+									if (x1.Result < x2.Result) return -1;
 									return 0;
 								});
 							} // for(var polygonindex in startingpolygonindexes)
@@ -578,28 +578,31 @@ namespace Csg
 							var vertices2d = polygonvertices2d[polygonindex];
 							var numvertices = vertices2d.Count;
 
+							//
+							// TODO: Interpolate the Texture Coordinate
+							//
 							var x = InterpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, ycoordinate);
-							var topleft = new Vector2D(x, ycoordinate);
+							var topleft = new Vertex2D(x.Result, ycoordinate, x.Tex);
 							x = InterpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, ycoordinate);
-							var topright = new Vector2D(x, ycoordinate);
+							var topright = new Vertex2D(x.Result, ycoordinate, x.Tex);
 							x = InterpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, nextycoordinate);
-							var bottomleft = new Vector2D(x, nextycoordinate);
+							var bottomleft = new Vertex2D(x.Result, nextycoordinate, x.Tex);
 							x = InterpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, nextycoordinate);
-							var bottomright = new Vector2D(x, nextycoordinate);
+							var bottomright = new Vertex2D(x.Result, nextycoordinate, x.Tex);
 							var outpolygon = new RetesselateActivePolygon
 							{
 								topleft = topleft,
 								topright = topright,
 								bottomleft = bottomleft,
 								bottomright = bottomright,
-								leftline = Line2D.FromPoints(topleft, bottomleft),
-								rightline = Line2D.FromPoints(bottomright, topright)
+								leftline = Line2D.FromPoints(topleft.Pos, bottomleft.Pos),
+								rightline = Line2D.FromPoints(bottomright.Pos, topright.Pos)
 							};
 							if (newoutpolygonrow.Count > 0)
 							{
 								var prevoutpolygon = newoutpolygonrow[newoutpolygonrow.Count - 1];
-								var d1 = outpolygon.topleft.DistanceTo(prevoutpolygon.topright);
-								var d2 = outpolygon.bottomleft.DistanceTo(prevoutpolygon.bottomright);
+								var d1 = outpolygon.topleft.Pos.DistanceTo(prevoutpolygon.topright.Pos);
+								var d2 = outpolygon.bottomleft.Pos.DistanceTo(prevoutpolygon.bottomright.Pos);
 								if ((d1 < EPS) && (d2 < EPS))
 								{
 									// we can join this polygon with the one to the left:
@@ -626,9 +629,9 @@ namespace Csg
 										// We have a match if the sidelines are equal or if the top coordinates
 										// are on the sidelines of the previous polygon
 										var prevpolygon = prevoutpolygonrow[ii];
-										if (prevpolygon.bottomleft.DistanceTo(thispolygon.topleft) < EPS)
+										if (prevpolygon.bottomleft.Pos.DistanceTo(thispolygon.topleft.Pos) < EPS)
 										{
-											if (prevpolygon.bottomright.DistanceTo(thispolygon.topright) < EPS)
+											if (prevpolygon.bottomright.Pos.DistanceTo(thispolygon.topright.Pos) < EPS)
 											{
 												// Yes, the top of this polygon matches the bottom of the previous:
 												matchedindexes.Add(ii);
@@ -662,21 +665,20 @@ namespace Csg
 									// Finish the polygon with the last point(s):
 									var prevpolygon = prevoutpolygonrow[ii];
 									prevpolygon.outpolygon.rightpoints.Add(prevpolygon.bottomright);
-									if (prevpolygon.bottomright.DistanceTo(prevpolygon.bottomleft) > EPS)
+									if (prevpolygon.bottomright.Pos.DistanceTo(prevpolygon.bottomleft.Pos) > EPS)
 									{
 										// polygon ends with a horizontal line:
 										prevpolygon.outpolygon.leftpoints.Add(prevpolygon.bottomleft);
 									}
 									// reverse the left half so we get a counterclockwise circle:
 									prevpolygon.outpolygon.leftpoints.Reverse();
-									var points2d = new List<Vector2D>(prevpolygon.outpolygon.rightpoints);
+									var points2d = new List<Vertex2D>(prevpolygon.outpolygon.rightpoints);
 									points2d.AddRange(prevpolygon.outpolygon.leftpoints);
 									var vertices3d = new List<Vertex>();
 									foreach (var point2d in points2d)
 									{
-										var point3d = orthobasis.To3D(point2d);
-										// TODO: What is the 2D coordinate of this vertex?
-										var vertex3d = new Vertex(point3d, new Vector2D (0, 0));
+										var point3d = orthobasis.To3D(point2d.Pos);
+										var vertex3d = new Vertex(point3d, point2d.Tex);
 										vertices3d.Add(vertex3d);
 									}
 									var polygon = new Polygon(vertices3d, shared, plane);
@@ -692,11 +694,11 @@ namespace Csg
 								// polygon starts here:
 								thispolygon.outpolygon = new RetesselateOutPolygon
 								{
-									leftpoints = new List<Vector2D>(),
-									rightpoints = new List<Vector2D>()
+									leftpoints = new List<Vertex2D>(),
+									rightpoints = new List<Vertex2D>()
 								};
 								thispolygon.outpolygon.leftpoints.Add(thispolygon.topleft);
-								if (thispolygon.topleft.DistanceTo(thispolygon.topright) > EPS)
+								if (thispolygon.topleft.Pos.DistanceTo(thispolygon.topright.Pos) > EPS)
 								{
 									// we have a horizontal line at the top:
 									thispolygon.outpolygon.rightpoints.Add(thispolygon.topright);
@@ -740,8 +742,10 @@ namespace Csg
 			array.Insert(leftbound, element);
 		}
 
-		static double InterpolateBetween2DPointsForY(Vector2D point1, Vector2D point2, double y)
+		static Vertex2DInterpolation InterpolateBetween2DPointsForY (Vertex2D vertex1, Vertex2D vertex2, double y)
 		{
+			var point1 = vertex1.Pos;
+			var point2 = vertex2.Pos;
 			var f1 = y - point1.Y;
 			var f2 = point2.Y - point1.Y;
 			if (f2 < 0)
@@ -766,7 +770,32 @@ namespace Csg
 				t = f1 / f2;
 			}
 			var result = point1.X + t * (point2.X - point1.X);
-			return result;
+			return new Vertex2DInterpolation {
+				Result = result,
+				Tex = vertex1.Tex + (vertex2.Tex - vertex1.Tex) * t,
+			};
+		}
+
+		struct Vertex2DInterpolation
+		{
+			public double Result;
+			public Vector2D Tex;
+		}
+
+		struct Vertex2D
+		{
+			public Vector2D Pos;
+			public Vector2D Tex;
+			public Vertex2D (Vector2D pos, Vector2D tex)
+			{
+				Pos = pos;
+				Tex = tex;
+			}
+			public Vertex2D (double x, double y, Vector2D tex)
+			{
+				Pos = new Vector2D (x, y);
+				Tex = tex;
+			}
 		}
 
 		class RetesselateActivePolygon
@@ -774,10 +803,10 @@ namespace Csg
 			public int polygonindex;
 			public int leftvertexindex;
 			public int rightvertexindex;
-			public Vector2D topleft;
-			public Vector2D topright;
-			public Vector2D bottomleft;
-			public Vector2D bottomright;
+			public Vertex2D topleft;
+			public Vertex2D topright;
+			public Vertex2D bottomleft;
+			public Vertex2D bottomright;
 			public Line2D leftline;
 			public bool leftlinecontinues;
 			public Line2D rightline;
@@ -787,8 +816,8 @@ namespace Csg
 
 		class RetesselateOutPolygon
 		{
-			public List<Vector2D> leftpoints;
-			public List<Vector2D> rightpoints;
+			public List<Vertex2D> leftpoints;
+			public List<Vertex2D> rightpoints;
 		}
 
 		static int staticTag = 1;
