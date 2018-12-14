@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Csg
 {
-	public class Tree
+	class Tree
 	{
 		PolygonTreeNode polygonTree;
 		Node rootnode;
@@ -49,7 +49,7 @@ namespace Csg
 		}
 	}
 
-	public class Node
+	class Node
 	{
 		public Plane Plane;
 		public Node Front;
@@ -211,7 +211,7 @@ namespace Csg
 		}
 	}
 
-	public class PolygonTreeNode
+	class PolygonTreeNode
 	{
 		PolygonTreeNode parent;
 		PolygonTreeNodeList children;
@@ -429,7 +429,7 @@ namespace Csg
 		}
 	}
 
-	public class PolygonTreeNodeList
+	class PolygonTreeNodeList
 	{
 		PolygonTreeNode singleton = null;
 		List<PolygonTreeNode> store = null;

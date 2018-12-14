@@ -245,7 +245,7 @@ namespace Csg
 		public double Radius;
 	}
 
-	public class OrthoNormalBasis
+	class OrthoNormalBasis
 	{
 		public readonly Vector3D U;
 		public readonly Vector3D V;
@@ -269,7 +269,7 @@ namespace Csg
 		}
 	}
 
-	public class Line2D
+	class Line2D
 	{
 		readonly Vector2D normal;
 		//readonly double w;

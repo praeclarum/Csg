@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Csg
 {
-	public class Octree
+	class Octree
 	{
 		public readonly OctreeNode RootNode;
 		public static Octree Unit()
@@ -36,7 +36,7 @@ namespace Csg
 		}
 	}
 
-	public class OctreeNode
+	class OctreeNode
 	{
 		public readonly BoundingBox BoundingBox;
 		public readonly OctreeNode[] Children;
