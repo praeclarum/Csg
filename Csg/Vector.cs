@@ -108,7 +108,7 @@ namespace Csg
 
 		public override string ToString()
 		{
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0:0.0}, {1:0.0}, {2:0.0}]", X, Y, Z);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0:0.000}, {1:0.000}, {2:0.000}]", X, Y, Z);
 		}
 
 		public Vector3D RandomNonParallelVector()
@@ -198,7 +198,7 @@ namespace Csg
 
 		public override string ToString()
 		{
-			return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0:0.0}, {1:0.0}]", X, Y);
+			return string.Format(System.Globalization.CultureInfo.InvariantCulture, "[{0:0.000}, {1:0.000}]", X, Y);
 		}
 	}
 

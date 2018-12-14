@@ -22,7 +22,7 @@ namespace Csg
 						c.X + r.X * (2 * ((i & 1) != 0 ? 1 : 0) - 1),
 							c.Y + r.Y * (2 * ((i & 2) != 0 ? 1 : 0) - 1),
 							c.Z + r.Z * (2 * ((i & 4) != 0 ? 1 : 0) - 1));
-					return new Vertex(pos);
+					return NoTexVertex(pos);
 				});
 				return new Polygon(vertices.ToList());
 			}).ToList());
@@ -93,22 +93,22 @@ namespace Csg
 						if (slice2 > 0)
 						{
 							var vertices = new List<Vertex>();
-							vertices.Add(new Vertex(center + (prevcylinderpoint * (prevcospitch) - (zvector * (prevsinpitch)))));
-							vertices.Add(new Vertex(center + (cylinderpoint * (prevcospitch) - (zvector * (prevsinpitch)))));
+							vertices.Add(NoTexVertex(center + (prevcylinderpoint * (prevcospitch) - (zvector * (prevsinpitch)))));
+							vertices.Add(NoTexVertex(center + (cylinderpoint * (prevcospitch) - (zvector * (prevsinpitch)))));
 							if (slice2 < qresolution)
 							{
-								vertices.Add(new Vertex(center + (cylinderpoint * (cospitch) - (zvector * (sinpitch)))));
+								vertices.Add(NoTexVertex(center + (cylinderpoint * (cospitch) - (zvector * (sinpitch)))));
 							}
-							vertices.Add(new Vertex(center + (prevcylinderpoint * (cospitch) - (zvector * (sinpitch)))));
+							vertices.Add(NoTexVertex(center + (prevcylinderpoint * (cospitch) - (zvector * (sinpitch)))));
 							polygons.Add(new Polygon(vertices));
 							vertices = new List<Vertex>();
-							vertices.Add(new Vertex(center + (prevcylinderpoint * (prevcospitch) + (zvector * (prevsinpitch)))));
-							vertices.Add(new Vertex(center + (cylinderpoint * (prevcospitch) + (zvector * (prevsinpitch)))));
+							vertices.Add(NoTexVertex(center + (prevcylinderpoint * (prevcospitch) + (zvector * (prevsinpitch)))));
+							vertices.Add(NoTexVertex(center + (cylinderpoint * (prevcospitch) + (zvector * (prevsinpitch)))));
 							if (slice2 < qresolution)
 							{
-								vertices.Add(new Vertex(center + (cylinderpoint * (cospitch) + (zvector * (sinpitch)))));
+								vertices.Add(NoTexVertex(center + (cylinderpoint * (cospitch) + (zvector * (sinpitch)))));
 							}
-							vertices.Add(new Vertex(center + (prevcylinderpoint * (cospitch) + (zvector * (sinpitch)))));
+							vertices.Add(NoTexVertex(center + (prevcylinderpoint * (cospitch) + (zvector * (sinpitch)))));
 							vertices.Reverse();
 							polygons.Add(new Polygon(vertices));
 						}
@@ -159,8 +159,8 @@ namespace Csg
 
 			var axisY = axisX.Cross(axisZ).Unit;
 			axisX = axisZ.Cross(axisY).Unit;
-			var start = new Vertex(s);
-			var end = new Vertex(e);
+			var start = NoTexVertex(s);
+			var end = NoTexVertex(e);
 			var polygons = new List<Polygon>();
 
 			Func<double, double, double, Vertex> point = (stack, slice, radius) =>
@@ -168,7 +168,7 @@ namespace Csg
 				var angle = slice * Math.PI * alpha / 180;
 				var outp = axisX * (Math.Cos(angle)) + (axisY * (Math.Sin(angle)));
 				var pos = s + (ray * (stack)) + (outp * (radius));
-				return new Vertex(pos);
+				return NoTexVertex(pos);
 			};
 
 			if (alpha > 0)
@@ -263,6 +263,8 @@ namespace Csg
 				return head.Intersect(rest);
 			}
 		}
+
+		static Vertex NoTexVertex (Vector3D pos) => new Vertex (pos, new Vector2D (0, 0));
 
 		static readonly int[][][] cubeData =
 			{

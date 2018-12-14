@@ -229,10 +229,7 @@ namespace Csg
 						}
 						else {
 							// line segment intersects plane:
-							var point = vertex.Pos;
-							var nextpoint = vertices[nextvertexindex].Pos;
-							var intersectionpoint = SplitLineBetweenPoints(point, nextpoint);
-							var intersectionvertex = new Vertex(intersectionpoint);
+							var intersectionvertex = SplitLineBetweenVertices(vertex, vertices[nextvertexindex]);
 							if (isback)
 							{
 								backvertices.Add(vertex);
@@ -288,15 +285,18 @@ namespace Csg
 				}
 			}
 		}
-		Vector3D SplitLineBetweenPoints(Vector3D p1, Vector3D p2)
+		Vertex SplitLineBetweenVertices(Vertex v1, Vertex v2)
 		{
+			var p1 = v1.Pos;
+			var p2 = v2.Pos;
 			var direction = p2 - (p1);
-			var labda = (W - Normal.Dot(p1)) / Normal.Dot(direction);
-			if (double.IsNaN(labda)) labda = 0;
-			if (labda > 1) labda = 1;
-			if (labda < 0) labda = 0;
-			var result = p1 + (direction * (labda));
-			return result;
+			var u = (W - Normal.Dot(p1)) / Normal.Dot(direction);
+			if (double.IsNaN(u)) u = 0;
+			if (u > 1) u = 1;
+			if (u < 0) u = 0;
+			var result = p1 + (direction * (u));
+			var tresult = v1.Tex + (v2.Tex - v1.Tex) * u;
+			return new Vertex (result, tresult);
 		}
 		public static Plane FromVector3Ds(Vector3D a, Vector3D b, Vector3D c)
 		{

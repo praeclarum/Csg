@@ -675,7 +675,8 @@ namespace Csg
 									foreach (var point2d in points2d)
 									{
 										var point3d = orthobasis.To3D(point2d);
-										var vertex3d = new Vertex(point3d);
+										// TODO: What is the 2D coordinate of this vertex?
+										var vertex3d = new Vertex(point3d, new Vector2D (0, 0));
 										vertices3d.Add(vertex3d);
 									}
 									var polygon = new Polygon(vertices3d, shared, plane);

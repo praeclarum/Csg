@@ -3,11 +3,13 @@
     public class Vertex
     {
         public Vector3D Pos;
+		public Vector2D Tex;
         int tag = 0;
 
-        public Vertex(Vector3D pos)
+        public Vertex(Vector3D pos, Vector2D tex)
         {
             Pos = pos;
+			Tex = tex;
         }
 
         public int Tag
@@ -32,7 +34,7 @@
         public Vertex Transform(Matrix4x4 matrix4x4)
         {
             var newpos = Pos * matrix4x4;
-            return new Vertex(newpos);
+            return new Vertex(newpos, Tex);
         }
     }
 }
