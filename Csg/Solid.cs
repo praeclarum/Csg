@@ -15,7 +15,9 @@ namespace Csg
 		public const int DefaultResolution2D = 32;
 		public const int DefaultResolution3D = 12;
 
-		public Solid()
+		BoundingBox? cachedBoundingBox;
+
+		public Solid ()
 		{
 			Polygons = new List<Polygon>();
 			Properties = new Properties();
@@ -275,8 +277,6 @@ namespace Csg
 				return result;
 			}
 		}
-
-		BoundingBox cachedBoundingBox;
 
 		BoundingBox Bounds
 		{
@@ -689,11 +689,7 @@ namespace Csg
 							if (thispolygon.outpolygon == null)
 							{
 								// polygon starts here:
-								thispolygon.outpolygon = new RetesselateOutPolygon
-								{
-									leftpoints = new List<Vertex2D>(),
-									rightpoints = new List<Vertex2D>()
-								};
+								thispolygon.outpolygon = new RetesselateOutPolygon ();
 								thispolygon.outpolygon.leftpoints.Add(thispolygon.topleft);
 								if (thispolygon.topleft.Pos.DistanceTo(thispolygon.topright.Pos) > EPS)
 								{
@@ -808,17 +804,17 @@ namespace Csg
 			public Vertex2D topright;
 			public Vertex2D bottomleft;
 			public Vertex2D bottomright;
-			public Line2D leftline;
+			public Line2D? leftline;
 			public bool leftlinecontinues;
-			public Line2D rightline;
+			public Line2D? rightline;
 			public bool rightlinecontinues;
-			public RetesselateOutPolygon outpolygon;
+			public RetesselateOutPolygon? outpolygon;
 		}
 
 		class RetesselateOutPolygon
 		{
-			public List<Vertex2D> leftpoints;
-			public List<Vertex2D> rightpoints;
+			public readonly List<Vertex2D> leftpoints = new List<Vertex2D> ();
+			public readonly List<Vertex2D> rightpoints = new List<Vertex2D> ();
 		}
 
 		static int staticTag = 1;
