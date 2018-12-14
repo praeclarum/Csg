@@ -578,9 +578,6 @@ namespace Csg
 							var vertices2d = polygonvertices2d[polygonindex];
 							var numvertices = vertices2d.Count;
 
-							//
-							// TODO: Interpolate the Texture Coordinate
-							//
 							var x = InterpolateBetween2DPointsForY(activepolygon.topleft, activepolygon.bottomleft, ycoordinate);
 							var topleft = new Vertex2D(x.Result, ycoordinate, x.Tex);
 							x = InterpolateBetween2DPointsForY(activepolygon.topright, activepolygon.bottomright, ycoordinate);
