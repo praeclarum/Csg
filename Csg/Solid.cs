@@ -338,7 +338,7 @@ namespace Csg
 				var plane = sourcepolygons[0].Plane;
 				var shared = sourcepolygons[0].Shared;
 				var orthobasis = new OrthoNormalBasis(plane);
-				var polygonvertices2d = new List<List<Vertex2D>>(); // array of array of CSG.Vector2D
+				var polygonvertices2d = new List<List<Vertex2D>>(); // array of array of Vertex2Ds
 				var polygontopvertexindexes = new List<int>(); // array of indexes of topmost vertex per polygon
 				var topy2polygonindexes = new Dictionary<double, List<int>>();
 				var ycoordinatetopolygonindexes = new Dictionary<double, HashSet<int>>();
@@ -782,6 +782,10 @@ namespace Csg
 			public Vector2D Tex;
 		}
 
+		/// <summary>
+		/// Used for tesselating co-planar polygons to keep
+		/// track of texture coordinates.
+		/// </summary>
 		struct Vertex2D
 		{
 			public Vector2D Pos;
