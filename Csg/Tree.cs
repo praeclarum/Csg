@@ -115,15 +115,15 @@ namespace Csg
 					if (clippingNode.Front != null && (frontnodes != null))
 					{
 						if (stack == null) stack = new Stack<Args>();
-						stack.Push(new Args { Node = clippingNode.Front, PolygonTreeNodes = frontnodes });
+						stack.Push(new Args (node: clippingNode.Front, polygonTreeNodes: frontnodes));
 					}
 					var numbacknodes = backnodes == null ? 0 : backnodes.Count;
-					if (clippingNode.Back != null && (numbacknodes > 0))
+					if (clippingNode.Back != null && backnodes != null && (numbacknodes > 0))
 					{
 						if (stack == null) stack = new Stack<Args>();
-						stack.Push(new Args { Node = clippingNode.Back, PolygonTreeNodes = backnodes });
+						stack.Push(new Args (node: clippingNode.Back, polygonTreeNodes: backnodes));
 					}
-					else {
+					else if (backnodes != null) {
 						// there's nothing behind this plane. Delete the nodes behind this plane:
 						for (var i = 0; i < numbacknodes; i++)
 						{
@@ -191,12 +191,12 @@ namespace Csg
 						polygontreenodes[i].SplitByPlane(_thisPlane, ref _this.PolygonTreeNodes, ref backnodes, ref frontnodes, ref backnodes);
 					}
 
-					if (frontnodes.Count > 0)
+					if (frontnodes != null && frontnodes.Count > 0)
 					{
 						if (node.Front == null) node.Front = new Node(node);
 						stack.Push(new Args (node: node.Front, polygonTreeNodes: frontnodes));
 					}
-					if (backnodes.Count > 0)
+					if (backnodes != null && backnodes.Count > 0)
 					{
 						if (node.Back == null) node.Back = new Node(node);
 						stack.Push(new Args (node: node.Back, polygonTreeNodes: backnodes));
@@ -253,11 +253,11 @@ namespace Csg
 #endif
 
 				// remove ourselves from the parent's children list:
-				var parentschildren = this.parent.children;
-				parentschildren.Remove(this);
+				var parentschildren = this.parent?.children;
+				parentschildren?.Remove(this);
 
 				// invalidate the parent's polygon, and of all parents above it:
-				this.parent.RecursivelyInvalidatePolygon();
+				this.parent?.RecursivelyInvalidatePolygon();
 			}
 		}
 
@@ -340,12 +340,12 @@ namespace Csg
 				if (d > sphereradius)
 				{
 					if (frontnodes == null) frontnodes = new PolygonTreeNodeList();
-					frontnodes.Add(this);
+					frontnodes?.Add(this);
 				}
 				else if (d < -sphereradius)
 				{
 					if (backnodes == null) backnodes = new PolygonTreeNodeList();
-					backnodes.Add(this);
+					backnodes?.Add(this);
 				}
 				else {
 					SplitPolygonResult splitresult;
@@ -354,32 +354,32 @@ namespace Csg
 					{
 						case 0:
 							if (coplanarfrontnodes == null) coplanarfrontnodes = new PolygonTreeNodeList();
-							coplanarfrontnodes.Add(this);
+							coplanarfrontnodes?.Add(this);
 							break;
 						case 1:
 							if (coplanarbacknodes == null) coplanarbacknodes = new PolygonTreeNodeList();
-							coplanarbacknodes.Add(this);
+							coplanarbacknodes?.Add(this);
 							break;
 						case 2:
 							if (frontnodes == null) frontnodes = new PolygonTreeNodeList();
-							frontnodes.Add(this);
+							frontnodes?.Add(this);
 							break;
 						case 3:
 							if (backnodes == null) backnodes = new PolygonTreeNodeList();
-							backnodes.Add(this);
+							backnodes?.Add(this);
 							break;
 						default:
 							if (splitresult.Front != null)
 							{
 								var frontnode = AddChild(splitresult.Front);
 								if (frontnodes == null) frontnodes = new PolygonTreeNodeList();
-								frontnodes.Add(frontnode);
+								frontnodes?.Add(frontnode);
 							}
 							if (splitresult.Back != null)
 							{
 								var backnode = AddChild(splitresult.Back);
 								if (backnodes == null) backnodes = new PolygonTreeNodeList();
-								backnodes.Add(backnode);
+								backnodes?.Add(backnode);
 							}
 							break;
 					}
