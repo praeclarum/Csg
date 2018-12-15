@@ -2,6 +2,12 @@
 
 namespace Csg
 {
+	/// <summary>
+	/// Convex polygons comprised of vertices lying on a plane.
+	/// Each polygon also has "Shared" data which is any
+	/// metadata (usually a material reference) that you need to
+	/// share between sets of polygons.
+	/// </summary>
 	public class Polygon
 	{
 		public readonly List<Vertex> Vertices;
