@@ -317,23 +317,28 @@ namespace Csg
 		{
 			if (children.Count > 0)
 			{
-				var queue = new Queue<PolygonTreeNodeList>();
-				queue.Enqueue(children);
-				while (queue.Count > 0)
+				Queue<PolygonTreeNodeList>? queue = null;
+				var nodes = children;
+				while (true)
 				{
-					var nodes = queue.Dequeue();
 					var l = nodes.Count;
 					for (int j = 0; j < l; j++)
 					{
 						var node = nodes[j];
 						if (node.children.Count > 0)
 						{
+							if (queue == null)
+								queue = new Queue<PolygonTreeNodeList> (node.children.Count);
 							queue.Enqueue(node.children);
 						}
 						else {
 							node.SplitPolygonByPlane(plane, ref coplanarfrontnodes, ref coplanarbacknodes, ref frontnodes, ref backnodes);
 						}
 					}
+					if (queue != null && queue.Count > 0)
+						nodes = queue.Dequeue ();
+					else
+						break;
 				}
 			}
 			else {
