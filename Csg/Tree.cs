@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using PolygonTreeNodeList = System.Collections.Generic.List<Csg.PolygonTreeNode>;
-
 namespace Csg
 {
 	class Tree
@@ -183,8 +181,8 @@ namespace Csg
 						_thisPlane = bestplane;
 					}
 
-					var frontnodes = new PolygonTreeNodeList();
-					var backnodes = new PolygonTreeNodeList();
+					var frontnodes = default (PolygonTreeNodeList);
+					var backnodes = default (PolygonTreeNodeList);
 
 					for (int i = 0, n = polygontreenodes.Count; i < n; i++)
 					{
@@ -280,7 +278,7 @@ namespace Csg
 		public void GetPolygons(List<Polygon> result)
 		{
 			var queue = new Queue<PolygonTreeNodeList>();
-			queue.Enqueue(new PolygonTreeNodeList (1) { this });
+			queue.Enqueue(new PolygonTreeNodeList (this));
 			while (queue.Count > 0)
 			{
 				var children = queue.Dequeue();
@@ -399,7 +397,7 @@ namespace Csg
 		void InvertSub()
 		{
 			var queue = new Queue<PolygonTreeNodeList>();
-			queue.Enqueue(new PolygonTreeNodeList (1) { this });
+			queue.Enqueue(new PolygonTreeNodeList (this));
 			while (queue.Count > 0)
 			{
 				var children = queue.Dequeue();
@@ -426,6 +424,60 @@ namespace Csg
 				{
 					node = node.parent;
 				}
+			}
+		}
+	}
+
+	class PolygonTreeNodeList
+	{
+		PolygonTreeNode? node0;
+		List<PolygonTreeNode>? nodes;
+		public int Count => nodes != null ? nodes.Count : (node0 != null ? 1 : 0);
+		public PolygonTreeNodeList (PolygonTreeNode item0)
+		{
+			this.node0 = item0;
+			this.nodes = null;
+		}
+		public PolygonTreeNodeList (int capacity)
+		{
+			node0 = null;
+			if (capacity > 1) {
+				nodes = new List<PolygonTreeNode> (capacity);
+			}
+			else {
+				nodes = null;
+			}
+		}
+		public PolygonTreeNodeList ()
+		{
+		}
+		public PolygonTreeNode this[int index] =>
+			nodes != null
+			? nodes[index]
+			: (node0 ?? throw new ArgumentOutOfRangeException (nameof (index)));
+		public void Add (PolygonTreeNode node)
+		{
+			if (nodes != null) {
+				nodes.Add (node);
+			}
+			else {
+				if (node0 == null) {
+					node0 = node;
+				}
+				else {
+					nodes = new List<PolygonTreeNode> (2) { node0, node };
+					node0 = null;
+				}
+			}
+		}
+		public void Remove (PolygonTreeNode node)
+		{
+			if (nodes != null) {
+				nodes.Remove (node);
+			}
+			else {
+				if (ReferenceEquals (node, node0))
+					node0 = null;
 			}
 		}
 	}
