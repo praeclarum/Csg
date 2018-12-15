@@ -2,8 +2,15 @@
 {
     public class Vertex
     {
-        public Vector3D Pos;
-		public Vector2D Tex;
+		/// <summary>
+		/// The world position of this vertex.
+		/// </summary>
+        public readonly Vector3D Pos;
+
+		/// <summary>
+		/// The texture coordinate of this vertex.
+		/// </summary>
+		public readonly Vector2D Tex;
         int tag = 0;
 
         public Vertex(Vector3D pos, Vector2D tex)
