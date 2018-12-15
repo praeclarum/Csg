@@ -12,6 +12,7 @@ namespace Csg.Test
 		{
 			var s = Cube(1);
 			Assert.AreEqual(6, s.Polygons.Count);
+			Assert.AreEqual (1, s.BoundingBox.Size.X, 1e-5);
 			AssertAcceptedStl(s, "CubeTest");
 		}
 
@@ -20,7 +21,8 @@ namespace Csg.Test
 		{
 			var s = Cube(1, center: false);
 			Assert.AreEqual(6, s.Polygons.Count);
-			AssertAcceptedStl(s, "CubeTest");
+			Assert.AreEqual (1, s.BoundingBox.Size.X, 1e-5);
+			AssertAcceptedStl (s, "CubeTest");
 		}
 
 		[Test]
@@ -31,14 +33,16 @@ namespace Csg.Test
 			var p0 = s.Polygons[0];
 			Assert.GreaterOrEqual(p0.Plane.W, 0.4);
 			Assert.LessOrEqual(p0.Plane.W, 0.6);
-			AssertAcceptedStl(s, "CubeTest");
+			Assert.AreEqual (1, s.BoundingBox.Size.X, 1e-5);
+			AssertAcceptedStl (s, "CubeTest");
 		}
 
 		[Test]
 		public void BigRadius()
 		{
 			var s = Cube(1.0e12);
-			AssertAcceptedStl(s, "CubeTest");
+			Assert.AreEqual (1.0e12, s.BoundingBox.Size.X, 1e-5);
+			AssertAcceptedStl (s, "CubeTest");
 		}
 	}
 }

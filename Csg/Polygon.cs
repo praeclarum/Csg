@@ -47,6 +47,9 @@ namespace Csg
 			}
 		}
 
+		/// <summary>
+		/// Axis-aligned bounding box for this polygon.
+		/// </summary>
 		public BoundingBox BoundingBox
 		{
 			get

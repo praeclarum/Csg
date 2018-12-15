@@ -4,14 +4,17 @@ using System.Linq;
 
 namespace Csg
 {
+	/// <summary>
+	/// A solid (water-tight) mesh of <see cref="Polygon"/>s.
+	/// </summary>
 	public class Solid
 	{
 		static readonly PolygonsPerPlaneKeyComparer polygonsPerPlaneKeyComparer = new PolygonsPerPlaneKeyComparer ();
 
-		public List<Polygon> Polygons;
+		public List<Polygon> Polygons { get; set; }
 
-		public bool IsCanonicalized;
-		public bool IsRetesselated;
+		public bool IsCanonicalized { get; private set; }
+		public bool IsRetesselated { get; private set; }
 
 		public const int DefaultResolution2D = 32;
 		public const int DefaultResolution3D = 12;
@@ -55,8 +58,8 @@ namespace Csg
 				return UnionForNonIntersecting(csg);
 			}
 			else {
-				var a = new Tree(Bounds, Polygons);
-				var b = new Tree(csg.Bounds, csg.Polygons);
+				var a = new Tree(BoundingBox, Polygons);
+				var b = new Tree(csg.BoundingBox, csg.Polygons);
 
 				a.ClipTo(b, false);
 				b.ClipTo(a);
@@ -96,8 +99,8 @@ namespace Csg
 
 		Solid SubtractSub(Solid csg, bool retesselate, bool canonicalize)
 		{
-			var a = new Tree(Bounds, Polygons);
-			var b = new Tree(csg.Bounds, csg.Polygons);
+			var a = new Tree(BoundingBox, Polygons);
+			var b = new Tree(csg.BoundingBox, csg.Polygons);
 
 			a.Invert();
 			a.ClipTo(b);
@@ -124,8 +127,8 @@ namespace Csg
 
 		Solid IntersectSub(Solid csg, bool retesselate, bool canonicalize)
 		{
-			var a = new Tree(Bounds, Polygons);
-			var b = new Tree(csg.Bounds, csg.Polygons);
+			var a = new Tree(BoundingBox, Polygons);
+			var b = new Tree(csg.BoundingBox, csg.Polygons);
 
 			a.Invert();
 			b.ClipTo(a);
@@ -252,7 +255,6 @@ namespace Csg
 					}
 				}
 				var destpolygons = new List<Polygon> ();
-				//var retess = new List<PlanePolygons> ();
 				foreach (var planetag in polygonsPerPlane)
 				{
 					var sourcepolygons = planetag.Value;
@@ -262,29 +264,16 @@ namespace Csg
 					}
 					else {
 						var retesselatedpolygons = new List<Polygon>(sourcepolygons.Count);
-						//retess.Add (new PlanePolygons { Source = sourcepolygons, Retesselated = retesselatedpolygons });
 						Solid.RetesselateCoplanarPolygons(sourcepolygons, retesselatedpolygons);
 						destpolygons.AddRange(retesselatedpolygons);
 					}
 				}
-				//System.Threading.Tasks.Parallel.ForEach (retess, x => {
-				//	Solid.RetesselateCoplanarPolygons (x.Source, x.Retesselated);
-				//});
-				//foreach (var x in retess) {
-				//	destpolygons.AddRange (x.Retesselated);
-				//}
 
 				var result = Solid.FromPolygons(destpolygons);
 				result.IsRetesselated = true;
 				return result;
 			}
 		}
-
-		//struct PlanePolygons
-		//{
-		//	public List<Polygon> Source;
-		//	public List<Polygon> Retesselated;
-		//}
 
 		struct PolygonsPerPlaneKey
 		{
@@ -309,7 +298,10 @@ namespace Csg
 			}
 		}
 
-		BoundingBox Bounds
+		/// <summary>
+		/// Axis-aligned bounding box for this solid.
+		/// </summary>
+		public BoundingBox BoundingBox
 		{
 			get
 			{
@@ -347,8 +339,8 @@ namespace Csg
 			}
 			else
 			{
-				var mybounds = Bounds;
-				var otherbounds = csg.Bounds;
+				var mybounds = BoundingBox;
+				var otherbounds = csg.BoundingBox;
 				if (mybounds.Max.X < otherbounds.Min.X) return false;
 				if (mybounds.Min.X > otherbounds.Max.X) return false;
 				if (mybounds.Max.Y < otherbounds.Min.Y) return false;
