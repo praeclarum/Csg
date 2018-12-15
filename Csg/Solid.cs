@@ -826,8 +826,8 @@ namespace Csg
 
 	class FuzzyCsgFactory
 	{
-		readonly FuzzyFactory<Vertex> vertexfactory = new FuzzyFactory<Vertex>(3, 1.0e-5);
-		readonly FuzzyFactory<Plane> planefactory = new FuzzyFactory<Plane>(4, 1.0e-5);
+		readonly VertexFactory vertexfactory = new VertexFactory (1.0e-5);
+		readonly PlaneFactory planefactory = new PlaneFactory(1.0e-5);
 		readonly Dictionary<string, PolygonShared> polygonsharedfactory = new Dictionary<string, PolygonShared>();
 
 		public PolygonShared GetPolygonShared(PolygonShared sourceshared)
@@ -847,15 +847,13 @@ namespace Csg
 
 		public Vertex GetVertex(Vertex sourcevertex)
 		{
-			var elements = new[] { sourcevertex.Pos.X, sourcevertex.Pos.Y, sourcevertex.Pos.Z };
-			var result = vertexfactory.LookupOrCreate(elements, els => sourcevertex);
+			var result = vertexfactory.LookupOrCreate(ref sourcevertex);
 			return result;
 		}
 
 		public Plane GetPlane(Plane sourceplane)
 		{
-			var elements = new[] { sourceplane.Normal.X, sourceplane.Normal.Y, sourceplane.Normal.Z, sourceplane.W };
-			var result = planefactory.LookupOrCreate(elements, els => sourceplane);
+			var result = planefactory.LookupOrCreate(sourceplane);
 			return result;
 		}
 
@@ -907,47 +905,94 @@ namespace Csg
 		}
 	}
 
-	class FuzzyFactory<T>
+	class VertexFactory
 	{
-		readonly Dictionary<string, T> lookuptable = new Dictionary<string, T>();
+		static readonly KeyComparer keyComparer = new KeyComparer ();
+		readonly Dictionary<Key, Vertex> lookuptable = new Dictionary<Key, Vertex> (keyComparer);
 		readonly double multiplier;
-		public FuzzyFactory(int numdimensions, double tolerance)
+		public VertexFactory (double tolerance)
 		{
 			multiplier = 1.0 / tolerance;
 		}
-		public T LookupOrCreate(double[] els, Func<double[], T> creatorCallback)
+		public Vertex LookupOrCreate (ref Vertex vertex)
 		{
-			var hash = "";
-			foreach (var el in els)
+			var key = new Key {
+				X = (int)(vertex.Pos.X * multiplier + 0.5),
+				Y = (int)(vertex.Pos.Y * multiplier + 0.5),
+				Z = (int)(vertex.Pos.Z * multiplier + 0.5),
+				U = (int)(vertex.Tex.X * multiplier + 0.5),
+				V = (int)(vertex.Tex.Y * multiplier + 0.5),
+			};
+			if (lookuptable.TryGetValue (key, out var v))
+				return v;
+			lookuptable.Add (key, vertex);
+			return vertex;
+		}
+		struct Key
+		{
+			public int X, Y, Z, U, V;
+		}
+		class KeyComparer : IEqualityComparer<Key>
+		{
+			public bool Equals (Key x, Key y)
 			{
-				var valueQuantized = (int)Math.Round(el * multiplier);
-				hash += valueQuantized + "/";
+				return x.X == y.X && x.Y == y.Y && x.Z == y.Z && x.U == y.U && x.Z == y.Z;
 			}
-			T result;
-			if (lookuptable.TryGetValue(hash, out result))
+
+			public int GetHashCode (Key k)
 			{
-				return result;
+				var hashCode = 1570706993;
+				hashCode = hashCode * -1521134295 + k.X.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.Y.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.Z.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.U.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.V.GetHashCode ();
+				return hashCode;
 			}
-			else {
-				result = creatorCallback(els);
-				var hashparts = els.Select(el => {
-					var q0 = Math.Floor(el * multiplier);
-					var q1 = q0 + 1;
-					return new[] { "" + q0 + "/", "" + q1 + "/" };
-				}).ToList();
-				var numelements = els.Length;
-				var numhashes = 1 << numelements;
-				for (var hashmask = 0; hashmask < numhashes; ++hashmask)
-				{
-					var hashmask_shifted = hashmask;
-					hash = "";
-					foreach (var hashpart in hashparts) {
-						hash += hashpart[hashmask_shifted & 1];
-						hashmask_shifted >>= 1;
-					}
-					lookuptable[hash] = result;
-				}
-				return result;
+		}
+	}
+
+	class PlaneFactory
+	{
+		static readonly KeyComparer keyComparer = new KeyComparer ();
+		readonly Dictionary<Key, Plane> lookuptable = new Dictionary<Key, Plane> (keyComparer);
+		readonly double multiplier;
+		public PlaneFactory (double tolerance)
+		{
+			multiplier = 1.0 / tolerance;
+		}
+		public Plane LookupOrCreate (Plane plane)
+		{
+			var key = new Key {
+				X = (int)(plane.Normal.X * multiplier + 0.5),
+				Y = (int)(plane.Normal.Y * multiplier + 0.5),
+				Z = (int)(plane.Normal.Z * multiplier + 0.5),
+				W = (int)(plane.W * multiplier + 0.5),
+			};
+			if (lookuptable.TryGetValue (key, out var p))
+				return p;
+			lookuptable.Add (key, plane);
+			return plane;
+		}
+		struct Key
+		{
+			public int X, Y, Z, W;
+		}
+		class KeyComparer : IEqualityComparer<Key>
+		{
+			public bool Equals (Key x, Key y)
+			{
+				return x.X == y.X && x.Y == y.Y && x.Z == y.Z && x.W == y.W;
+			}
+
+			public int GetHashCode (Key k)
+			{
+				var hashCode = 1570706993;
+				hashCode = hashCode * -1521134295 + k.X.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.Y.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.Z.GetHashCode ();
+				hashCode = hashCode * -1521134295 + k.W.GetHashCode ();
+				return hashCode;
 			}
 		}
 	}
