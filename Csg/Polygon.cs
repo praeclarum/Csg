@@ -14,8 +14,6 @@ namespace Csg
 		public readonly Plane Plane;
 		public readonly PolygonShared Shared;
 
-		readonly bool debug = false;
-
 		static readonly PolygonShared defaultShared = new PolygonShared(null);
 
 		BoundingSphere? cachedBoundingSphere;
@@ -26,10 +24,6 @@ namespace Csg
 			Vertices = vertices;
 			Shared = shared ?? defaultShared;
 			Plane = plane ?? Plane.FromVector3Ds(vertices[0].Pos, vertices[1].Pos, vertices[2].Pos);
-			if (debug)
-			{
-				//CheckIfConvex();
-			}
 		}
 
 		public Polygon(params Vertex[] vertices)
