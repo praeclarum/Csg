@@ -936,7 +936,7 @@ namespace Csg
 		{
 			public bool Equals (Key x, Key y)
 			{
-				return x.X == y.X && x.Y == y.Y && x.Z == y.Z && x.U == y.U && x.Z == y.Z;
+				return x.X == y.X && x.Y == y.Y && x.Z == y.Z && x.U == y.U && x.V == y.V;
 			}
 
 			public int GetHashCode (Key k)
