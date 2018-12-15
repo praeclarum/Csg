@@ -164,9 +164,9 @@ namespace Csg
 		{
 			var args = new Args (node: this, polygonTreeNodes: addpolygontreenodes);
 			var stack = new Stack<Args>();
-			var node = args.Node;
-			while (node != null)
+			while (args.Node != null)
 			{
+				var node = args.Node;
 				var polygontreenodes = args.PolygonTreeNodes;
 
 				if (polygontreenodes.Count == 0)
