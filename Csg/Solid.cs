@@ -9,7 +9,6 @@ namespace Csg
 		static readonly PolygonsPerPlaneKeyComparer polygonsPerPlaneKeyComparer = new PolygonsPerPlaneKeyComparer ();
 
 		public List<Polygon> Polygons;
-		public Properties Properties;
 
 		public bool IsCanonicalized;
 		public bool IsRetesselated;
@@ -22,7 +21,6 @@ namespace Csg
 		public Solid ()
 		{
 			Polygons = new List<Polygon>();
-			Properties = new Properties();
 			IsCanonicalized = true;
 			IsRetesselated = true;
 		}
@@ -69,7 +67,6 @@ namespace Csg
 				var newpolygons = new List<Polygon>(a.AllPolygons());
 				newpolygons.AddRange(b.AllPolygons());
 				var result = Solid.FromPolygons(newpolygons);
-				result.Properties = Properties.Merge(csg.Properties);
 				if (retesselate) result = result.Retesselated();
 				if (canonicalize) result = result.Canonicalized();
 				return result;
@@ -81,7 +78,6 @@ namespace Csg
 			var newpolygons = new List<Polygon>(Polygons);
 			newpolygons.AddRange(csg.Polygons);
 			var result = Solid.FromPolygons(newpolygons);
-			result.Properties = Properties.Merge(csg.Properties);
 			result.IsCanonicalized = IsCanonicalized && csg.IsCanonicalized;
 			result.IsRetesselated = IsRetesselated && csg.IsRetesselated;
 			return result;
@@ -110,7 +106,6 @@ namespace Csg
 			a.Invert();
 
 			var result = Solid.FromPolygons(a.AllPolygons());
-			result.Properties = Properties.Merge(csg.Properties);
 			if (retesselate) result = result.Retesselated();
 			if (canonicalize) result = result.Canonicalized();
 			return result;
@@ -141,7 +136,6 @@ namespace Csg
 			a.Invert();
 
 			var result = Solid.FromPolygons(a.AllPolygons());
-			result.Properties = Properties.Merge(csg.Properties);
 			if (retesselate) result = result.Retesselated();
 			if (canonicalize) result = result.Canonicalized();
 			return result;
@@ -180,7 +174,6 @@ namespace Csg
 				newpolygons.Add(new Polygon(newvertices, p.Shared, newplane));
 			}
 			var result = Solid.FromPolygons(newpolygons);
-			result.Properties = this.Properties.Transform(matrix4x4);
 			result.IsRetesselated = this.IsRetesselated;
 			result.IsCanonicalized = this.IsCanonicalized;
 			return result;
@@ -222,7 +215,6 @@ namespace Csg
 				var result = factory.GetCsg(this);
 				result.IsCanonicalized = true;
 				result.IsRetesselated = IsRetesselated;
-				result.Properties = Properties;
 				return result;
 			}
 		}
@@ -284,7 +276,6 @@ namespace Csg
 
 				var result = Solid.FromPolygons(destpolygons);
 				result.IsRetesselated = true;
-				result.Properties = Properties;
 				return result;
 			}
 		}
