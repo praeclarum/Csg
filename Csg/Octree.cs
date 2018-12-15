@@ -42,7 +42,7 @@ namespace Csg
 	internal class OctreeNode
 	{
 		public readonly BoundingBox BoundingBox;
-		public readonly OctreeNode[] Children;
+		public readonly OctreeNode[]? Children;
 		public readonly List<PolygonTreeNode> Polygons = new List<PolygonTreeNode>();
 		static readonly Vector3D[] coffsets = new[] {
 			new Vector3D(0.25, 0.25, 0.25),
@@ -78,7 +78,7 @@ namespace Csg
 			var pbox = polygon.BoundingBox;
 			for (var i = 0; i < 8; i++)
 			{
-				if (Children[i].BoundingBox.Intersects(pbox))
+				if (pbox == null || Children[i].BoundingBox.Intersects(pbox))
 				{
 					Children[i].AddPolygon(polygon);
 				}

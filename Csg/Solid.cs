@@ -15,7 +15,9 @@ namespace Csg
 		public const int DefaultResolution2D = 32;
 		public const int DefaultResolution3D = 12;
 
-		public Solid()
+		BoundingBox? cachedBoundingBox;
+
+		public Solid ()
 		{
 			Polygons = new List<Polygon>();
 			Properties = new Properties();
@@ -275,8 +277,6 @@ namespace Csg
 				return result;
 			}
 		}
-
-		BoundingBox cachedBoundingBox;
 
 		BoundingBox Bounds
 		{
@@ -619,40 +619,38 @@ namespace Csg
 							for (var i = 0; i < newoutpolygonrow.Count; i++)
 							{
 								var thispolygon = newoutpolygonrow[i];
-								for (var ii = 0; ii < prevoutpolygonrow.Count; ii++)
-								{
-									if (!matchedindexes.Contains(ii)) // not already processed?
-									{
-										// We have a match if the sidelines are equal or if the top coordinates
-										// are on the sidelines of the previous polygon
-										var prevpolygon = prevoutpolygonrow[ii];
-										if (prevpolygon.bottomleft.Pos.DistanceTo(thispolygon.topleft.Pos) < EPS)
+								if (thispolygon.leftline != null && thispolygon.rightline != null) {
+									for (var ii = 0; ii < prevoutpolygonrow.Count; ii++) {
+										if (!matchedindexes.Contains (ii)) // not already processed?
 										{
-											if (prevpolygon.bottomright.Pos.DistanceTo(thispolygon.topright.Pos) < EPS)
-											{
-												// Yes, the top of this polygon matches the bottom of the previous:
-												matchedindexes.Add(ii);
-												// Now check if the joined polygon would remain convex:
-												var d1 = thispolygon.leftline.Direction.X - prevpolygon.leftline.Direction.X;
-												var d2 = thispolygon.rightline.Direction.X - prevpolygon.rightline.Direction.X;
-												var leftlinecontinues = Math.Abs(d1) < EPS;
-												var rightlinecontinues = Math.Abs(d2) < EPS;
-												var leftlineisconvex = leftlinecontinues || (d1 >= 0);
-												var rightlineisconvex = rightlinecontinues || (d2 >= 0);
-												if (leftlineisconvex && rightlineisconvex)
-												{
-													// yes, both sides have convex corners:
-													// This polygon will continue the previous polygon
-													thispolygon.outpolygon = prevpolygon.outpolygon;
-													thispolygon.leftlinecontinues = leftlinecontinues;
-													thispolygon.rightlinecontinues = rightlinecontinues;
-													prevcontinuedindexes.Add(ii);
+											// We have a match if the sidelines are equal or if the top coordinates
+											// are on the sidelines of the previous polygon
+											var prevpolygon = prevoutpolygonrow[ii];
+											if (prevpolygon.leftline != null && prevpolygon.rightline != null && prevpolygon.bottomleft.Pos.DistanceTo (thispolygon.topleft.Pos) < EPS) {
+												if (prevpolygon.bottomright.Pos.DistanceTo (thispolygon.topright.Pos) < EPS) {
+													// Yes, the top of this polygon matches the bottom of the previous:
+													matchedindexes.Add (ii);
+													// Now check if the joined polygon would remain convex:
+													var d1 = thispolygon.leftline.Direction.X - prevpolygon.leftline.Direction.X;
+													var d2 = thispolygon.rightline.Direction.X - prevpolygon.rightline.Direction.X;
+													var leftlinecontinues = Math.Abs (d1) < EPS;
+													var rightlinecontinues = Math.Abs (d2) < EPS;
+													var leftlineisconvex = leftlinecontinues || (d1 >= 0);
+													var rightlineisconvex = rightlinecontinues || (d2 >= 0);
+													if (leftlineisconvex && rightlineisconvex) {
+														// yes, both sides have convex corners:
+														// This polygon will continue the previous polygon
+														thispolygon.outpolygon = prevpolygon.outpolygon;
+														thispolygon.leftlinecontinues = leftlinecontinues;
+														thispolygon.rightlinecontinues = rightlinecontinues;
+														prevcontinuedindexes.Add (ii);
+													}
+													break;
 												}
-												break;
 											}
-										}
-									} // if(!prevcontinuedindexes[ii])
-								} // for ii
+										} // if(!prevcontinuedindexes[ii])
+									} // for ii
+								}
 							} // for i
 							for (var ii = 0; ii < prevoutpolygonrow.Count; ii++)
 							{
@@ -661,6 +659,8 @@ namespace Csg
 									// polygon ends here
 									// Finish the polygon with the last point(s):
 									var prevpolygon = prevoutpolygonrow[ii];
+									if (prevpolygon.outpolygon == null)
+										continue;
 									prevpolygon.outpolygon.rightpoints.Add(prevpolygon.bottomright);
 									if (prevpolygon.bottomright.Pos.DistanceTo(prevpolygon.bottomleft.Pos) > EPS)
 									{
@@ -689,11 +689,7 @@ namespace Csg
 							if (thispolygon.outpolygon == null)
 							{
 								// polygon starts here:
-								thispolygon.outpolygon = new RetesselateOutPolygon
-								{
-									leftpoints = new List<Vertex2D>(),
-									rightpoints = new List<Vertex2D>()
-								};
+								thispolygon.outpolygon = new RetesselateOutPolygon ();
 								thispolygon.outpolygon.leftpoints.Add(thispolygon.topleft);
 								if (thispolygon.topleft.Pos.DistanceTo(thispolygon.topright.Pos) > EPS)
 								{
@@ -808,17 +804,17 @@ namespace Csg
 			public Vertex2D topright;
 			public Vertex2D bottomleft;
 			public Vertex2D bottomright;
-			public Line2D leftline;
+			public Line2D? leftline;
 			public bool leftlinecontinues;
-			public Line2D rightline;
+			public Line2D? rightline;
 			public bool rightlinecontinues;
-			public RetesselateOutPolygon outpolygon;
+			public RetesselateOutPolygon? outpolygon;
 		}
 
 		class RetesselateOutPolygon
 		{
-			public List<Vertex2D> leftpoints;
-			public List<Vertex2D> rightpoints;
+			public readonly List<Vertex2D> leftpoints = new List<Vertex2D> ();
+			public readonly List<Vertex2D> rightpoints = new List<Vertex2D> ();
 		}
 
 		static int staticTag = 1;

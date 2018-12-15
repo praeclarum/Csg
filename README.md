@@ -9,3 +9,9 @@ Constructive Solid Geometry is a modeling library that provides
 
 This library is a manual port of [OpenJsCad's](https://github.com/joostn/OpenJsCad) [csg.js](https://github.com/joostn/OpenJsCad/blob/gh-pages/src/csg.js).
 
+
+## Development
+
+To build Csg, you need C# 8.0 available through [.NET Core 3.0](https://dotnet.microsoft.com/download).
+
+
