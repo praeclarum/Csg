@@ -1,6 +1,7 @@
 #Rejected tests
 Csg.Test/Results/*_.stl
 /.vs
+BenchmarkDotNet.Artifacts
 
 #Autosave files
 *~
