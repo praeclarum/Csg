@@ -6,6 +6,8 @@ namespace Csg
 {
 	public class Solid
 	{
+		static readonly PolygonsPerPlaneKeyComparer polygonsPerPlaneKeyComparer = new PolygonsPerPlaneKeyComparer ();
+
 		public List<Polygon> Polygons;
 		public Properties Properties;
 
@@ -233,7 +235,7 @@ namespace Csg
 			}
 			else {
 				var csg = this;
-				var polygonsPerPlane = new Dictionary<string, List<Polygon>>();
+				var polygonsPerPlane = new Dictionary<PolygonsPerPlaneKey, List<Polygon>>(polygonsPerPlaneKeyComparer);
 				var isCanonicalized = csg.IsCanonicalized;
 				var fuzzyFactory = new FuzzyCsgFactory();
 				foreach (var polygon in csg.Polygons)
@@ -245,19 +247,20 @@ namespace Csg
 						plane = fuzzyFactory.GetPlane(plane);
 						shared = fuzzyFactory.GetPolygonShared(shared);
 					}
-					var tag = plane.Tag + "/" + shared.Tag;
+					var tag = new PolygonsPerPlaneKey { PlaneTag = plane.Tag, SharedTag = shared.Tag };
 					List<Polygon> ppp;
 					if (polygonsPerPlane.TryGetValue(tag, out ppp))
 					{
 						ppp.Add(polygon);
 					}
 					else {
-						ppp = new List<Polygon>();
+						ppp = new List<Polygon>(1);
 						ppp.Add(polygon);
 						polygonsPerPlane.Add(tag, ppp);
 					}
 				}
-				var destpolygons = new List<Polygon>();
+				var destpolygons = new List<Polygon> ();
+				//var retess = new List<PlanePolygons> ();
 				foreach (var planetag in polygonsPerPlane)
 				{
 					var sourcepolygons = planetag.Value;
@@ -266,15 +269,52 @@ namespace Csg
 						destpolygons.AddRange(sourcepolygons);
 					}
 					else {
-						var retesselatedpolygons = new List<Polygon>();
+						var retesselatedpolygons = new List<Polygon>(sourcepolygons.Count);
+						//retess.Add (new PlanePolygons { Source = sourcepolygons, Retesselated = retesselatedpolygons });
 						Solid.RetesselateCoplanarPolygons(sourcepolygons, retesselatedpolygons);
 						destpolygons.AddRange(retesselatedpolygons);
 					}
 				}
+				//System.Threading.Tasks.Parallel.ForEach (retess, x => {
+				//	Solid.RetesselateCoplanarPolygons (x.Source, x.Retesselated);
+				//});
+				//foreach (var x in retess) {
+				//	destpolygons.AddRange (x.Retesselated);
+				//}
+
 				var result = Solid.FromPolygons(destpolygons);
 				result.IsRetesselated = true;
 				result.Properties = Properties;
 				return result;
+			}
+		}
+
+		//struct PlanePolygons
+		//{
+		//	public List<Polygon> Source;
+		//	public List<Polygon> Retesselated;
+		//}
+
+		struct PolygonsPerPlaneKey
+		{
+			public int PlaneTag;
+			public int SharedTag;
+		}
+
+		class PolygonsPerPlaneKeyComparer : IEqualityComparer<PolygonsPerPlaneKey>
+		{
+			public bool Equals (PolygonsPerPlaneKey x, PolygonsPerPlaneKey y)
+			{
+				return x.PlaneTag == y.PlaneTag &&
+					   x.SharedTag == y.SharedTag;
+			}
+
+			public int GetHashCode (PolygonsPerPlaneKey obj)
+			{
+				var hashCode = -981392073;
+				hashCode = hashCode * -1521134295 + obj.PlaneTag.GetHashCode ();
+				hashCode = hashCode * -1521134295 + obj.SharedTag.GetHashCode ();
+				return hashCode;
 			}
 		}
 
@@ -820,7 +860,7 @@ namespace Csg
 		static int staticTag = 1;
 		public static int GetTag()
 		{
-			return staticTag++;
+			return System.Threading.Interlocked.Increment (ref staticTag);
 		}
 	}
 

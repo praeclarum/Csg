@@ -91,7 +91,15 @@ namespace Csg
 
 	public class PolygonShared
 	{
-		public int Tag;
+		int tag = 0;
+		public int Tag {
+			get {
+				if (tag == 0) {
+					tag = Solid.GetTag ();
+				}
+				return tag;
+			}
+		}
 		public PolygonShared(object color)
 		{			
 		}
