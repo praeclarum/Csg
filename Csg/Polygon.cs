@@ -117,32 +117,5 @@ namespace Csg
 			}
 		}
 	}
-
-	public class Properties
-	{
-		public readonly Dictionary<string, object> All = new Dictionary<string, object>();
-		public Properties Merge(Properties otherproperties)
-		{
-			var result = new Properties();
-			foreach (var x in All)
-			{
-				result.All.Add(x.Key, x.Value);
-			}
-			foreach (var x in otherproperties.All)
-			{
-				result.All[x.Key] = x.Value;
-			}
-			return result;
-		}
-		public Properties Transform(Matrix4x4 matrix4x4)
-		{
-			var result = new Properties();
-			foreach (var x in All)
-			{
-				result.All.Add(x.Key, x.Value);
-			}
-			return result;
-		}
-	}
 }
 
