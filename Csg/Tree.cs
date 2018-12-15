@@ -64,17 +64,29 @@ namespace Csg
 
 		public void Invert()
 		{
-			var queue = new Queue<Node>();
-			queue.Enqueue(this);
-			while (queue.Count > 0)
+			Queue<Node>? queue = null;
+			Node node = this;
+			while (true)
 			{
-				var node = queue.Dequeue();
 				if (node.Plane != null) node.Plane = node.Plane.Flipped();
-				if (node.Front != null) queue.Enqueue(node.Front);
-				if (node.Back != null) queue.Enqueue(node.Back);
+				if (node.Front != null) {
+					if (queue == null)
+						queue = new Queue<Node> ();
+					queue.Enqueue (node.Front);
+				}
+				if (node.Back != null) {
+					if (queue == null)
+						queue = new Queue<Node> ();
+					queue.Enqueue (node.Back);
+				}
 				var temp = node.Front;
 				node.Front = node.Back;
 				node.Back = temp;
+
+				if (queue != null && queue.Count > 0)
+					node = queue.Dequeue ();
+				else
+					break;
 			}
 		}
 
@@ -83,7 +95,7 @@ namespace Csg
 			var args = new Args (node: this, polygonTreeNodes: clippolygontreenodes);
 			Stack<Args>? stack = null;
 
-			while (args.Node != null)
+			while (true)
 			{
 				var clippingNode = args.Node;
 				var polygontreenodes = args.PolygonTreeNodes;
@@ -130,7 +142,7 @@ namespace Csg
 					}
 				}
 				if (stack != null && stack.Count > 0) args = stack.Pop();
-				else args.Node = null;
+				else break;
 			}
 		}
 
@@ -161,8 +173,8 @@ namespace Csg
 		public void AddPolygonTreeNodes(PolygonTreeNodeList addpolygontreenodes)
 		{
 			var args = new Args (node: this, polygonTreeNodes: addpolygontreenodes);
-			var stack = new Stack<Args>();
-			while (args.Node != null)
+			Stack<Args>? stack = null;
+			while (true)
 			{
 				var node = args.Node;
 				var polygontreenodes = args.PolygonTreeNodes;
@@ -192,25 +204,29 @@ namespace Csg
 					if (frontnodes != null && frontnodes.Count > 0)
 					{
 						if (node.Front == null) node.Front = new Node(node);
+						if (stack == null)
+							stack = new Stack<Args> ();
 						stack.Push(new Args (node: node.Front, polygonTreeNodes: frontnodes));
 					}
 					if (backnodes != null && backnodes.Count > 0)
 					{
 						if (node.Back == null) node.Back = new Node(node);
+						if (stack == null)
+							stack = new Stack<Args> ();
 						stack.Push(new Args (node: node.Back, polygonTreeNodes: backnodes));
 					}
 				}
 
-				if (stack.Count > 0) args = stack.Pop();
-				else args.Node = null;
+				if (stack != null && stack.Count > 0) args = stack.Pop();
+				else break;
 			}
 		}
 		struct Args
 		{
-			public Node? Node;
+			public Node Node;
 			public PolygonTreeNodeList PolygonTreeNodes;
 
-			public Args (Node? node, PolygonTreeNodeList polygonTreeNodes)
+			public Args (Node node, PolygonTreeNodeList polygonTreeNodes)
 			{
 				Node = node;
 				PolygonTreeNodes = polygonTreeNodes;
