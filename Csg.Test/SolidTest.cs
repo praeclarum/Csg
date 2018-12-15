@@ -12,12 +12,13 @@ namespace Csg.Test
 			var aname = $"{fixtureName}.{testName}.stl";
 			var rname = $"{fixtureName}.{testName}_.stl";
 			var asmPath = System.Reflection.Assembly.GetCallingAssembly().Location;
-			var repoPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(asmPath)));
+			var repoPath = Path.GetDirectoryName (Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(asmPath))));
 			var resultsPath = Path.Combine(repoPath, "Results");
 			if (!Directory.Exists(resultsPath))
 			{
-				Console.WriteLine("Test results could not be found at {0}", resultsPath);
-				return;
+				throw new InvalidOperationException ("Test results could not be found at " + resultsPath);
+				//Assert.Inconclusive ("Test results could not be found at " + resultsPath);
+				//return;
 			}
 
 			var acceptedPath = Path.Combine(resultsPath, aname);
@@ -36,7 +37,7 @@ namespace Csg.Test
 				if (testStl != acceptedStl)
 				{
 					File.WriteAllText(rejectedPath, testStl);
-					Assert.Fail("Result differs from accepted.");
+					Assert.Fail("Result differs from accepted: " + rejectedPath);
 				}
 			}
 		}
