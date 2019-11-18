@@ -54,7 +54,7 @@ namespace Csg
 		public Plane? Plane;
 		public Node? Front;
 		public Node? Back;
-		public PolygonTreeNodeList PolygonTreeNodes = new PolygonTreeNodeList ();
+		public PolygonTreeNodeList? PolygonTreeNodes = new PolygonTreeNodeList ();
 		public readonly Node? Parent;
 
 		public Node(Node? parent)
@@ -152,7 +152,7 @@ namespace Csg
 			Stack<Node>? stack = null;
 			while (node != null)
 			{
-				if (node.PolygonTreeNodes.Count > 0)
+				if (node.PolygonTreeNodes?.Count > 0)
 				{
 					clippingTree.RootNode.ClipPolygons(node.PolygonTreeNodes, alsoRemoveCoplanarFront);
 				}
