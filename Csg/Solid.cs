@@ -13,8 +13,8 @@ namespace Csg
 		public bool IsCanonicalized;
 		public bool IsRetesselated;
 
-		// public const int DefaultResolution2D = 32;
-		// public const int DefaultResolution3D = 12;
+		public const int DefaultResolution2D = 32;
+		public const int DefaultResolution3D = 12;
 
 		BoundingBox? cachedBoundingBox;
 
