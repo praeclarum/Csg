@@ -198,7 +198,7 @@ namespace Csg
 
 					for (int i = 0, n = polygontreenodes.Count; i < n; i++)
 					{
-						polygontreenodes[i].SplitByPlane(_thisPlane, ref _this.PolygonTreeNodes, ref backnodes, ref frontnodes, ref backnodes);
+						polygontreenodes[i].SplitByPlane(_thisPlane, ref _this.PolygonTreeNodes!, ref backnodes, ref frontnodes, ref backnodes);
 					}
 
 					if (frontnodes != null && frontnodes.Count > 0)
