@@ -36,16 +36,22 @@ namespace Csg
 
 		public Solid Union(params Solid[] others)
 		{
-			var csgs = new List<Solid>();
-			csgs.Add(this);
-			csgs.AddRange(others);
-			var i = 1;
-			for (; i < csgs.Count; i += 2)
-			{
-				var n = csgs[i - 1].UnionSub(csgs[i], false, false);
-				csgs.Add(n);
+			if (others.Length == 0) {
+				return this;
 			}
-			return csgs[i - 1].Retesselated().Canonicalized();
+
+			var csgs = new Queue<Solid>(others);
+			csgs.Enqueue (this);
+			while (csgs.Count > 1) 
+			{
+				var a = csgs.Dequeue();
+				var b = csgs.Dequeue();
+
+				var n = a.UnionSub(b, false, false);
+				csgs.Enqueue(n);
+			}
+
+			return csgs.Dequeue().Retesselated().Canonicalized();
 		}
 
 		Solid UnionSub(Solid csg, bool retesselate, bool canonicalize)
