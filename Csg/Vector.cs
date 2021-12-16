@@ -8,6 +8,18 @@ namespace Csg
 
 		public Vector3D(double x, double y, double z)
 		{
+			if (double.IsNaN (x)) 
+            {
+				throw new ArgumentOutOfRangeException (nameof (x), "Value is NaN");
+			}
+			if (double.IsNaN (y)) 
+            {
+				throw new ArgumentOutOfRangeException (nameof (y), "Value is NaN");
+			}
+			if (double.IsNaN (z)) 
+            {
+				throw new ArgumentOutOfRangeException (nameof (z), "Value is NaN");
+            }
 			X = x;
 			Y = y;
 			Z = z;
