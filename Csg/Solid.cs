@@ -83,7 +83,7 @@ namespace Csg
 			return result;
 		}
 
-		public Solid Substract(params Solid[] csgs)
+		public Solid Subtract(params Solid[] csgs)
 		{
 			Solid result = this;
 			for (var i = 0; i < csgs.Length; i++)

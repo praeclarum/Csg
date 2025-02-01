@@ -246,7 +246,7 @@ namespace Csg
 			{
 				var head = csgs[0];
 				var rest = csgs.Skip(1).ToArray();
-				return head.Substract(rest);
+				return head.Subtract(rest);
 			}
 		}
 
