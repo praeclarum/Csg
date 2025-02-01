@@ -945,11 +945,11 @@ namespace Csg
 		public Vertex LookupOrCreate (ref Vertex vertex)
 		{
 			var key = new Key {
-				X = (int)(vertex.Pos.X * multiplier + 0.5),
-				Y = (int)(vertex.Pos.Y * multiplier + 0.5),
-				Z = (int)(vertex.Pos.Z * multiplier + 0.5),
-				U = (int)(vertex.Tex.X * multiplier + 0.5),
-				V = (int)(vertex.Tex.Y * multiplier + 0.5),
+				X = (long)(vertex.Pos.X * multiplier + 0.5),
+				Y = (long)(vertex.Pos.Y * multiplier + 0.5),
+				Z = (long)(vertex.Pos.Z * multiplier + 0.5),
+				U = (long)(vertex.Tex.X * multiplier + 0.5),
+				V = (long)(vertex.Tex.Y * multiplier + 0.5),
 			};
 			if (lookuptable.TryGetValue (key, out var v))
 				return v;
@@ -958,7 +958,7 @@ namespace Csg
 		}
 		struct Key
 		{
-			public int X, Y, Z, U, V;
+			public long X, Y, Z, U, V;
 		}
 		class KeyComparer : IEqualityComparer<Key>
 		{
@@ -992,10 +992,10 @@ namespace Csg
 		public Plane LookupOrCreate (Plane plane)
 		{
 			var key = new Key {
-				X = (int)(plane.Normal.X * multiplier + 0.5),
-				Y = (int)(plane.Normal.Y * multiplier + 0.5),
-				Z = (int)(plane.Normal.Z * multiplier + 0.5),
-				W = (int)(plane.W * multiplier + 0.5),
+				X = (long)(plane.Normal.X * multiplier + 0.5),
+				Y = (long)(plane.Normal.Y * multiplier + 0.5),
+				Z = (long)(plane.Normal.Z * multiplier + 0.5),
+				W = (long)(plane.W * multiplier + 0.5),
 			};
 			if (lookuptable.TryGetValue (key, out var p))
 				return p;
@@ -1004,7 +1004,7 @@ namespace Csg
 		}
 		struct Key
 		{
-			public int X, Y, Z, W;
+			public long X, Y, Z, W;
 		}
 		class KeyComparer : IEqualityComparer<Key>
 		{
