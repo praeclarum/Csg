@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Csg
 {
-	class Tree
+	public class Tree
 	{
 		PolygonTreeNode polygonTree;
 		Node rootnode;
 
-		public Node RootNode => rootnode;
+		internal Node RootNode => rootnode;
 
 		public Tree(BoundingBox bbox, List<Polygon> polygons)
 		{
