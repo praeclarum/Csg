@@ -1,6 +1,6 @@
 # CSG
 
-[![Build Status](https://app.bitrise.io/app/ac8a3403f1b8977a/status.svg?token=cZ72_Fb1fv1qFyBXXDQxhg)](https://app.bitrise.io/app/ac8a3403f1b8977a)
+[![Build](https://github.com/praeclarum/Csg/actions/workflows/build.yml/badge.svg)](https://github.com/praeclarum/Csg/actions/workflows/build.yml)
 
 [![NuGet Package](https://img.shields.io/nuget/v/SolidGeometry.svg)](https://www.nuget.org/packages/SolidGeometry)
 
