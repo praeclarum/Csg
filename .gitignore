@@ -1,3 +1,5 @@
+/PackagesOut
+
 #Rejected tests
 Csg.Test/Results/*_.stl
 /.vs

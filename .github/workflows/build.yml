@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  VERSION: 0.9.${{github.run_number}}
+
 jobs:
   build:
 
@@ -20,6 +23,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build -c Release --no-restore /p:Version=$VERSION
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test -c Release --no-build --verbosity normal /p:Version=$VERSION
+    - name: Package
+      run: dotnet pack -c Release --no-build /p:Version=$VERSION -o ./PackagesOut
+    - name: Upload package
+      uses: actions/upload-artifact@v3
+      with:
+        name: PackagesOut
