@@ -12,6 +12,6 @@ This library is a manual port of [OpenJsCad's](https://github.com/joostn/OpenJsC
 
 ## Development
 
-To build Csg, you need C# 8.0 available through [.NET Core 3.0](https://dotnet.microsoft.com/download).
+To build Csg, you need C# 13.0 available through [.NET 9.0](https://dotnet.microsoft.com/download).
 
 
