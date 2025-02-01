@@ -240,8 +240,7 @@ namespace Csg
 						shared = fuzzyFactory.GetPolygonShared(shared);
 					}
 					var tag = new PolygonsPerPlaneKey { PlaneTag = plane.Tag, SharedTag = shared.Tag };
-					List<Polygon> ppp;
-					if (polygonsPerPlane.TryGetValue(tag, out ppp))
+					if (polygonsPerPlane.TryGetValue(tag, out var ppp))
 					{
 						ppp.Add(polygon);
 					}
@@ -541,8 +540,7 @@ namespace Csg
 						nextycoordinate = ycoordinates[yindex + 1];
 						var middleycoordinate = 0.5 * (ycoordinate + nextycoordinate);
 						// update activepolygons by adding any polygons that start here:
-						List<int> startingpolygonindexes;
-						if (topy2polygonindexes.TryGetValue(ycoordinate, out startingpolygonindexes))
+						if (topy2polygonindexes.TryGetValue(ycoordinate, out var startingpolygonindexes))
 						{
 							foreach (var polygonindex in startingpolygonindexes)
 							{
@@ -864,8 +862,7 @@ namespace Csg
 		public PolygonShared GetPolygonShared(PolygonShared sourceshared)
 		{
 			var hash = sourceshared.Hash;
-			PolygonShared result;
-			if (polygonsharedfactory.TryGetValue(hash, out result))
+			if (polygonsharedfactory.TryGetValue(hash, out var result))
 			{
 				return result;
 			}

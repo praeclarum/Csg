@@ -26,10 +26,10 @@ namespace Csg
             Normal = normal;
             W = w;
         }
-        public bool Equals(Plane n)
+        public bool Equals(Plane? otherPlane)
         {
 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-            return Normal.Equals(n.Normal) && W == n.W;
+            return otherPlane is {} n ? Normal.Equals(n.Normal) && W == n.W : false;
 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
         }
         public Plane Flipped()

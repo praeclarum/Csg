@@ -106,7 +106,7 @@ namespace Csg
 				return tag;
 			}
 		}
-		public PolygonShared(object color)
+		public PolygonShared(object? color)
 		{			
 		}
 		public string Hash
