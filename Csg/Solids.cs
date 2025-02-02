@@ -214,25 +214,30 @@ namespace Csg
 			return Cylinder(new CylinderOptions { Start = start, End = end, RadiusStart = r, RadiusEnd = r, });
 		}
 
+		public static Solid Union(Solid[] csgs, bool retesselate, bool canonicalize)
+		{
+			if (csgs.Length == 0)
+			{
+				return new Solid();
+			}
+			else if (csgs.Length == 1)
+			{
+				return csgs[0];
+			}
+			else
+			{
+				var head = csgs[0];
+				var rest = csgs.Skip(1).ToArray();
+				return head.Union(rest, retesselate: retesselate, canonicalize: canonicalize);
+			}
+		}
+
 		public static Solid Union(params Solid[] csgs)
 		{
-			if (csgs.Length == 0)
-			{
-				return new Solid();
-			}
-			else if (csgs.Length == 1)
-			{
-				return csgs[0];
-			}
-			else
-			{
-				var head = csgs[0];
-				var rest = csgs.Skip(1).ToArray();
-				return head.Union(rest);
-			}
+			return Union(csgs, retesselate: true, canonicalize: true);
 		}
 
-		public static Solid Difference(params Solid[] csgs)
+		public static Solid Difference(Solid[] csgs, bool retesselate, bool canonicalize)
 		{
 			if (csgs.Length == 0)
 			{
@@ -246,11 +251,15 @@ namespace Csg
 			{
 				var head = csgs[0];
 				var rest = csgs.Skip(1).ToArray();
-				return head.Subtract(rest);
+				return head.Subtract(rest, retesselate: retesselate, canonicalize: canonicalize);
 			}
 		}
+		public static Solid Difference(params Solid[] csgs)
+		{
+			return Difference(csgs, retesselate: true, canonicalize: true);
+		}
 
-		public static Solid Intersection(params Solid[] csgs)
+		public static Solid Intersection(Solid[] csgs, bool retesselate, bool canonicalize)
 		{
 			if (csgs.Length == 0 || csgs.Length == 1)
 			{
@@ -260,8 +269,13 @@ namespace Csg
 			{
 				var head = csgs[0];
 				var rest = csgs.Skip(1).ToArray();
-				return head.Intersect(rest);
+				return head.Intersect(rest, retesselate: retesselate, canonicalize: canonicalize);
 			}
+		}
+
+		public static Solid Intersection(params Solid[] csgs)
+		{
+			return Intersection(csgs, retesselate: true, canonicalize: true);
 		}
 
 		static Vertex NoTexVertex (Vector3D pos) => new Vertex (pos, new Vector2D (0, 0));

@@ -36,6 +36,11 @@ namespace Csg
 
 		public Solid Union(params Solid[] others)
 		{
+			return Union(others, true, true);
+		}
+
+		public Solid Union(Solid[] others, bool retesselate, bool canonicalize)
+		{
 			if (others.Length == 0) {
 				return this;
 			}
@@ -47,14 +52,17 @@ namespace Csg
 				var a = csgs.Dequeue();
 				var b = csgs.Dequeue();
 
-				var n = a.UnionSub(b, false, false);
+				var n = a.UnionSub(b);
 				csgs.Enqueue(n);
 			}
 
-			return csgs.Dequeue().Retesselated().Canonicalized();
+			var result = csgs.Dequeue();
+			if (retesselate) result = result.Retesselated();
+			if (canonicalize) result = result.Canonicalized();
+			return result;
 		}
 
-		Solid UnionSub(Solid csg, bool retesselate, bool canonicalize)
+		Solid UnionSub(Solid csg)
 		{
 			if (!MayOverlap(csg))
 			{
@@ -72,10 +80,7 @@ namespace Csg
 
 				var newpolygons = new List<Polygon>(a.AllPolygons());
 				newpolygons.AddRange(b.AllPolygons());
-				var result = Solid.FromPolygons(newpolygons);
-				if (retesselate) result = result.Retesselated();
-				if (canonicalize) result = result.Canonicalized();
-				return result;
+				return FromPolygons(newpolygons);
 			}
 		}
 
@@ -91,16 +96,22 @@ namespace Csg
 
 		public Solid Subtract(params Solid[] csgs)
 		{
+			return Subtract(csgs, true, true);
+		}
+
+		public Solid Subtract(Solid[] csgs, bool retesselate, bool canonicalize)
+		{
 			Solid result = this;
 			for (var i = 0; i < csgs.Length; i++)
 			{
-				var islast = (i == (csgs.Length - 1));
-				result = result.SubtractSub(csgs[i], islast, islast);
+				result = result.SubtractSub(csgs[i]);
 			}
+			if (retesselate) result = result.Retesselated();
+			if (canonicalize) result = result.Canonicalized();
 			return result;
 		}
 
-		Solid SubtractSub(Solid csg, bool retesselate, bool canonicalize)
+		Solid SubtractSub(Solid csg)
 		{
 			var a = new Tree(Bounds, Polygons);
 			var b = new Tree(csg.Bounds, csg.Polygons);
@@ -111,24 +122,27 @@ namespace Csg
 			a.AddPolygons(b.AllPolygons());
 			a.Invert();
 
-			var result = Solid.FromPolygons(a.AllPolygons());
+			return FromPolygons(a.AllPolygons());
+		}
+
+		public Solid Intersect(params Solid[] csgs)
+		{
+			return Intersect(csgs, true, true);
+		}
+
+		public Solid Intersect(Solid[] csgs, bool retesselate, bool canonicalize)
+		{
+			var result = this;
+			for (var i = 0; i < csgs.Length; i++)
+			{
+				result = result.IntersectSub(csgs[i]);
+			}
 			if (retesselate) result = result.Retesselated();
 			if (canonicalize) result = result.Canonicalized();
 			return result;
 		}
 
-		public Solid Intersect(params Solid[] csgs)
-		{
-			var result = this;
-			for (var i = 0; i < csgs.Length; i++)
-			{
-				var islast = (i == (csgs.Length - 1));
-				result = result.IntersectSub(csgs[i], islast, islast);
-			}
-			return result;
-		}
-
-		Solid IntersectSub(Solid csg, bool retesselate, bool canonicalize)
+		Solid IntersectSub(Solid csg)
 		{
 			var a = new Tree(Bounds, Polygons);
 			var b = new Tree(csg.Bounds, csg.Polygons);
@@ -141,10 +155,7 @@ namespace Csg
 			a.AddPolygons(b.AllPolygons());
 			a.Invert();
 
-			var result = Solid.FromPolygons(a.AllPolygons());
-			if (retesselate) result = result.Retesselated();
-			if (canonicalize) result = result.Canonicalized();
-			return result;
+			return FromPolygons(a.AllPolygons());
 		}
 
 		public Solid Transform(Matrix4x4 matrix4x4)
