@@ -307,6 +307,98 @@ namespace Csg
 					new[] { 0, 0, +1}
 				}
 			};
+
+		public static Solid Torus(TorusOptions options)
+		{
+			var center = options.Center;
+			var majorRadius = Math.Abs(options.MajorRadius);
+			var minorRadius = Math.Abs(options.MinorRadius);
+			var segments = Math.Max(3, options.Resolution);
+			var sides = Math.Max(3, options.Sides);
+
+			if (majorRadius <= 0 || minorRadius <= 0)
+				return new Solid();
+
+			var polygons = new List<Polygon>();
+			
+			// Generate vertices
+			for (var i = 0; i < segments; i++)
+			{
+				var theta = 2 * Math.PI * i / segments;
+				var nextTheta = 2 * Math.PI * ((i + 1) % segments) / segments;
+				
+				// Center of the tube segment
+				var tc = new Vector3D(
+					majorRadius * Math.Cos(theta),
+					majorRadius * Math.Sin(theta),
+					0
+				);
+				var nextTc = new Vector3D(
+					majorRadius * Math.Cos(nextTheta),
+					majorRadius * Math.Sin(nextTheta),
+					0
+				);
+
+				// Generate the tube segment
+				for (var j = 0; j < sides; j++)
+				{
+					var phi = 2 * Math.PI * j / sides;
+					var nextPhi = 2 * Math.PI * ((j + 1) % sides) / sides;
+					
+					var cosPhi = Math.Cos(phi);
+					var sinPhi = Math.Sin(phi);
+					var cosNextPhi = Math.Cos(nextPhi);
+					var sinNextPhi = Math.Sin(nextPhi);
+
+					var p1 = tc + new Vector3D(
+						minorRadius * cosPhi * Math.Cos(theta),
+						minorRadius * cosPhi * Math.Sin(theta),
+						minorRadius * sinPhi
+					);
+					var p2 = tc + new Vector3D(
+						minorRadius * cosNextPhi * Math.Cos(theta),
+						minorRadius * cosNextPhi * Math.Sin(theta),
+						minorRadius * sinNextPhi
+					);
+					var p3 = nextTc + new Vector3D(
+						minorRadius * cosNextPhi * Math.Cos(nextTheta),
+						minorRadius * cosNextPhi * Math.Sin(nextTheta),
+						minorRadius * sinNextPhi
+					);
+					var p4 = nextTc + new Vector3D(
+						minorRadius * cosPhi * Math.Cos(nextTheta),
+						minorRadius * cosPhi * Math.Sin(nextTheta),
+						minorRadius * sinPhi
+					);
+
+					// Translate to center position
+					p1 += center;
+					p2 += center;
+					p3 += center;
+					p4 += center;
+
+					polygons.Add(new Polygon(new List<Vertex> {
+						NoTexVertex(p1),
+						NoTexVertex(p2),
+						NoTexVertex(p3),
+						NoTexVertex(p4)
+					}));
+				}
+			}
+
+			return Solid.FromPolygons(polygons);
+		}
+
+		public static Solid Torus(double majorRadius = 2, double minorRadius = 1, Vector3D center = null, int segments = 32, int sides = 16)
+		{
+			return Torus(new TorusOptions {
+				MajorRadius = majorRadius,
+				MinorRadius = minorRadius,
+				Center = center ?? new Vector3D(0, 0, 0),
+				Resolution = segments,
+				Sides = sides
+			});
+		}
 	}
 
 	public class CubeOptions
@@ -333,6 +425,15 @@ namespace Csg
 		public double RadiusEnd = 1;
 		public double SectorAngle = 360;
 		public int Resolution = Solid.DefaultResolution3D;
+	}
+
+	public class TorusOptions
+	{
+		public Vector3D Center;
+		public double MajorRadius = 1;
+		public double MinorRadius = 0.1;
+		public int Resolution = Solid.DefaultResolution3D;
+		public int Sides = Solid.DefaultResolution3D / 2;
 	}
 }
 
