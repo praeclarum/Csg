@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace Csg
 {
+	/// <summary>
+	/// Binary space partitioning tree.
+	/// Used to represent the boundary between the solid and empty space.
+	/// </summary>
 	class Tree
 	{
 		PolygonTreeNode polygonTree;

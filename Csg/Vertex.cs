@@ -52,7 +52,8 @@
         public override string ToString() => Pos.ToString();
 
         /// <summary>
-        /// Left multiplies the position of this vertex with the given matrix.
+        /// Left multiplies the position of this vertex with the given matrix
+		/// and returns a new <see cref="Vertex"/>.
         /// The texture coordinate is unchanged.
         /// </summary>
         /// <returns>A new transformed vertex.</returns>

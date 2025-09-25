@@ -16,10 +16,10 @@ public class Servo
     public Solid GetSolid()
     {
         Solid body =
-            Cube(size: new Vector3D(BodyWidth, BodyHeight, BodyDepth)).
+            Box(size: new Vector3D(BodyWidth, BodyHeight, BodyDepth)).
             Translate(-BodyWidth/2, 0, -BodyDepth/2);
         Solid bracket =
-            Cube(TotalWidth, BracketHeight, BodyDepth, center: false).
+            Box(TotalWidth, BracketHeight, BodyDepth, center: false).
             Translate(-TotalWidth/2, BodyDescent, -BodyDepth/2);
         Solid hole1 =
             Cylinder(HoleDiameter/2, BracketHeight*4, center: true).

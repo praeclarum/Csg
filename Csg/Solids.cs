@@ -6,13 +6,13 @@ namespace Csg
 {
 	public static class Solids
 	{
-		public static Solid Cube(CubeOptions options)
+		public static Solid Box(BoxOptions options)
 		{
 			var c = options.Center;
 			var r = options.Radius.Abs; // negative radii make no sense
 			if (r.X == 0.0 || r.Y == 0.0 || r.Z == 0.0)
 				return new Solid();
-			var result = Solid.FromPolygons(cubeData.Select(info =>
+			var result = Solid.FromPolygons(boxData.Select(info =>
 			{
 				//var normal = new Vector3D(info[1]);
 				//var plane = new Plane(normal, 1);
@@ -29,39 +29,39 @@ namespace Csg
 			return result;
 		}
 
-		public static Solid Cube(double size = 1, bool center = false)
+		public static Solid Box(double size = 1, bool center = false)
 		{
 			var r = new Vector3D(size / 2, size / 2, size / 2);
 			var c = center ? new Vector3D(0, 0, 0) : r;
-			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+			return Solids.Box(new BoxOptions { Radius = r, Center = c });
 		}
 
-		public static Solid Cube(double size, Vector3D center)
+		public static Solid Box(double size, Vector3D center)
 		{
 			var r = new Vector3D(size / 2, size / 2, size / 2);
 			var c = center;
-			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+			return Solids.Box(new BoxOptions { Radius = r, Center = c });
 		}
 
-		public static Solid Cube(Vector3D size, bool center = false)
+		public static Solid Box(Vector3D size, bool center = false)
 		{
 			var r = size / 2;
 			var c = center ? new Vector3D(0, 0, 0) : r;
-			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+			return Solids.Box(new BoxOptions { Radius = r, Center = c });
 		}
 
-		public static Solid Cube(Vector3D size, Vector3D center)
+		public static Solid Box(Vector3D size, Vector3D center)
 		{
 			var r = size / 2;
 			var c = center;
-			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+			return Solids.Box(new BoxOptions { Radius = r, Center = c });
 		}
 
-		public static Solid Cube(double width, double height, double depth, bool center = false)
+		public static Solid Box(double width, double height, double depth, bool center = false)
 		{
 			var r = new Vector3D(width/2, height/2, depth/2);
 			var c = center ? new Vector3D(0, 0, 0) : r;
-			return Solids.Cube(new CubeOptions { Radius = r, Center = c });
+			return Solids.Box(new BoxOptions { Radius = r, Center = c });
 		}
 
 		public static Solid Sphere(SphereOptions options)
@@ -266,7 +266,7 @@ namespace Csg
 
 		static Vertex NoTexVertex (Vector3D pos) => new Vertex (pos, new Vector2D (0, 0));
 
-		static readonly int[][][] cubeData =
+		static readonly int[][][] boxData =
 			{
 				new[] {
 					new[] { 0, 4, 6, 2 },
@@ -295,7 +295,7 @@ namespace Csg
 			};
 	}
 
-	public class CubeOptions
+	public class BoxOptions
 	{
 		public Vector3D Center;
 		public Vector3D Radius = new Vector3D(1, 1, 1);

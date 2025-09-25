@@ -19,6 +19,7 @@ namespace Csg
 		/// The offset of the plane calculated as (Normal dot P) where P is any point on the plane.
 		/// </summary>
 		public readonly double W;
+
 		int tag = 0;
 
 		/// <summary>
